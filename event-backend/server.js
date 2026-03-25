@@ -1,0 +1,42 @@
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const phaseRoutes = require("./routes/phaseRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
+const verifyRoutes = require("./routes/verifyRoutes");
+
+const app = express();
+
+// connect database
+connectDB();
+
+// middlewares
+app.use(cors());
+app.use(express.json());
+
+// routes
+app.use("/api/auth", authRoutes);
+app.use("/api/phase", phaseRoutes);
+app.use("/api/verify", verifyRoutes);
+
+// test protected route
+app.get("/api/protected", authMiddleware, (req, res) => {
+  res.json({
+    message: "Access granted",
+    userId: req.userId
+  });
+});
+
+// base route
+app.get("/", (req, res) => {
+  res.send("Backend running");
+});
+
+const PORT = 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
