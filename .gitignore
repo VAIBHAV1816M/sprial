@@ -1,0 +1,16 @@
+# Dependency folders (The heavy stuff)
+**/node_modules/
+
+# Secrets (The dangerous stuff)
+**/.env
+**/.env.local
+**/.env.production
+
+# Build folders
+**/dist/
+**/build/
+**/.next/
+
+# OS specific files
+.DS_Store
+Thumbs.db
