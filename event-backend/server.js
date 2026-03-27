@@ -13,8 +13,16 @@ const app = express();
 // connect database
 connectDB();
 
+// ✅ FIXED CORS (IMPORTANT)
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://sprial.vercel.app"
+  ],
+  credentials: true
+}));
+
 // middlewares
-app.use(cors());
 app.use(express.json());
 
 // routes
