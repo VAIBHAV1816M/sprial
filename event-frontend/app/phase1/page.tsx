@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import API from "../../services/api";
 import { getToken, saveToken } from "../../utils/auth";
-import Phase1UI from "@/components/phase1/Phase1UI";
+import Phase1UI from "../../components/phase1/Phase1UI";
 
 export default function Phase1() {
 
@@ -18,7 +18,8 @@ export default function Phase1() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   const [solved, setSolved] = useState<any>({});
-  const [answers, setAnswers] = useState<any>({}); // ⭐ IMPORTANT
+  const [answers, setAnswers] = useState<any>({});
+  const [wrongSignal, setWrongSignal] = useState<Record<string, number>>({});
 
   const clues = [
     { id: "clue1", question: "Clue 1 question here" },
@@ -28,50 +29,51 @@ export default function Phase1() {
     { id: "clue5", question: "Clue 5 question here" }
   ];
 
-  /*
-  🔥 AUTO LOGIN
-  */
-  useEffect(() => {
+  // ✅ UPDATED LOGIC (controlled access)
+ useEffect(() => {
 
-    const token = getToken();
+  const token = getToken();
+  const entry = localStorage.getItem("entry"); // 🔥 same as phase3
+  const inside = sessionStorage.getItem("insidePhase1"); // 🔥 new
 
-    if (token) {
+  if (token) {
 
-      const fetchData = async () => {
+    const fetchData = async () => {
+      try {
+        const res = await API.get("/phase/phase1");
 
-        try {
-
-          const res = await API.get("/phase/phase1");
+        if (entry === "home" || inside === "true") {
 
           setIsAllowed(true);
           setSolved(res.data.cluesSolved || {});
-          setAnswers(res.data.cluesAnswers || {}); // ⭐ ADDED
-
+          setAnswers(res.data.cluesAnswers || {});
           setMessage("");
 
-        } catch {
+          // ✅ mark user inside phase
+          sessionStorage.setItem("insidePhase1", "true");
 
+          // ✅ clear entry flag
+          localStorage.removeItem("entry");
+
+        } else {
           setIsAllowed(false);
-
-        } finally {
-
-          setCheckingAuth(false);
-
         }
 
-      };
+      } catch {
+        setIsAllowed(false);
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
 
-      fetchData();
+    fetchData();
 
-    } else {
+  } else {
+    setCheckingAuth(false);
+  }
 
-      setCheckingAuth(false);
+}, []);
 
-    }
-
-  }, []);
-
-  // Handle login input
   const handleChange = (e:any) => {
     setForm({
       ...form,
@@ -79,15 +81,10 @@ export default function Phase1() {
     });
   };
 
-  /*
-  🔐 LOGIN HANDLER
-  */
   const handleLogin = async (e:any) => {
-
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
       const res = await API.post("/auth/login", form);
@@ -97,51 +94,41 @@ export default function Phase1() {
 
       saveToken(token);
 
-      if (phase === 1) {
+if (phase === 1) {
+  setIsAllowed(true);
+  setMessage("");
 
-        setIsAllowed(true);
-        setMessage("");
+  sessionStorage.setItem("insidePhase1", "true"); // ✅ IMPORTANT
 
-        const data = await API.get("/phase/phase1");
+  const data = await API.get("/phase/phase1");
 
-        setSolved(data.data.cluesSolved || {});
-        setAnswers(data.data.cluesAnswers || {}); // ⭐ ADDED
-
-      }
+  setSolved(data.data.cluesSolved || {});
+  setAnswers(data.data.cluesAnswers || {});
+}
 
       else if (phase === 2 || phase === 3) {
-
         setMessage("You have already completed Phase 1.");
-
+        setIsAllowed(false); // ✅ ADDED
       }
 
     } catch (err:any) {
-
       setMessage(
         err.response?.data?.message || "Login failed"
       );
-
     }
 
     setLoading(false);
-
   };
 
-  // Handle input
   const handleAnswerChange = (clueId:string, value:string) => {
-
     setAnswers({
       ...answers,
       [clueId]: value
     });
-
   };
 
-  // Submit answer
   const handleSubmit = async (clueId:string) => {
-
     try {
-
       const res = await API.post("/phase/phase1/answer", {
         clueId,
         answer: answers[clueId]
@@ -150,32 +137,27 @@ export default function Phase1() {
       setMessage(res.data.message);
 
       if (res.data.phase1Token) {
-
         localStorage.setItem("verifyPhase", "1");
         window.location.href = "/verify";
         return;
-
       }
 
       setSolved(res.data.cluesSolved || {});
 
-      // ⭐ keep answer after submit
       setAnswers((prev:any) => ({
         ...prev,
         [clueId]: answers[clueId]
       }));
 
     } catch (err:any) {
-
       setMessage(err.response?.data?.message || "Error");
 
+      setWrongSignal((prev) => ({
+        ...prev,
+        [clueId]: Date.now()
+      }));
     }
-
   };
-
-  /*
-  ---------------- UI ----------------
-  */
 
   if (checkingAuth) {
     return (
@@ -185,21 +167,15 @@ export default function Phase1() {
     );
   }
 
-  // 🔴 LOGIN UI
   if (!isAllowed) {
-
     return (
-
       <div className="flex justify-center items-center h-screen">
-
         <div className="w-[400px] p-8 border rounded-lg shadow-lg">
-
           <h1 className="text-2xl font-bold mb-6 text-center">
             Phase 1 Login
           </h1>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
-
             <input
               name="email"
               type="email"
@@ -224,7 +200,6 @@ export default function Phase1() {
             >
               {loading ? "Logging in..." : "Login"}
             </button>
-
           </form>
 
           {message && (
@@ -232,26 +207,20 @@ export default function Phase1() {
               {message}
             </p>
           )}
-
         </div>
-
       </div>
-
     );
-
   }
 
-  // ✅ SHOW CLUES
-
   return (
-  <Phase1UI
-    clues={clues}
-    solved={solved}
-    answers={answers}
-    onAnswerChange={handleAnswerChange}
-    onSubmit={handleSubmit}
-    message={message}
-  />
-);
-
+    <Phase1UI
+      clues={clues}
+      solved={solved}
+      answers={answers}
+      wrongSignal={wrongSignal}
+      onAnswerChange={handleAnswerChange}
+      onSubmit={handleSubmit}
+      message={message}
+    />
+  );
 }

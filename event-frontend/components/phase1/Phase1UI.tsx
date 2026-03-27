@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ClueCard from "./ClueCard";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -14,6 +14,7 @@ type Props = {
   clues: Clue[];
   solved: Record<string, boolean>;
   answers: Record<string, string>;
+  wrongSignal: Record<string, number>;
   onAnswerChange: (clueId: string, value: string) => void;
   onSubmit: (clueId: string) => void;
   message: string;
@@ -61,7 +62,7 @@ function RotatingShape({ teal = true }: { teal?: boolean }) {
 }
 
 export default function Phase1UI({
-  clues, solved, answers, onAnswerChange, onSubmit, message,
+  clues, solved, answers, wrongSignal, onAnswerChange, onSubmit, message,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shapeRef = useRef<HTMLDivElement>(null);
@@ -87,7 +88,6 @@ export default function Phase1UI({
 
     const frame = () => {
       ctx.clearRect(0, 0, W, H);
-      // Grid logic
       for (let c = 0; c <= 20; c++) {
         const x = (c / 20) * W;
         const d = Math.abs((mouseRef.current.x / W) - c / 20);
@@ -95,7 +95,6 @@ export default function Phase1UI({
         ctx.lineWidth = 0.5;
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
       }
-      // Orbs logic
       orbsRef.current.forEach((o) => {
         const dx = mouseRef.current.x - o.x; const dy = mouseRef.current.y - o.y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -132,11 +131,16 @@ export default function Phase1UI({
   for (let i = 0; i < clues.length; i += 2) { rows.push([clues[i], clues[i + 1] ?? null]); }
   const solvedCount = Object.values(solved).filter(Boolean).length;
 
+  const isError = message.toLowerCase().includes("wrong") || 
+                  message.toLowerCase().includes("failed") || 
+                  message.toLowerCase().includes("error") || 
+                  message.toLowerCase().includes("incorrect");
+
   return (
     <div className="relative min-h-screen bg-[#050709] text-[#e8eaf0] font-dm selection:bg-neon-teal/30 overflow-x-hidden">
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none block" />
 
-      {/* Ambient Glow Blobs - Replacing phase1.css blobs */}
+      {/* Ambient Glow Blobs */}
       <div className="fixed top-[-150px] left-[-150px] w-[600px] h-[600px] rounded-full blur-[100px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(0,255,204,0.07)_0%,transparent_70%)]" />
       <div className="fixed top-[25%] right-[-120px] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(167,139,250,0.06)_0%,transparent_70%)]" />
       <div className="fixed bottom-[15%] left-[10%] w-[400px] h-[400px] rounded-full blur-[100px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(0,255,204,0.05)_0%,transparent_70%)]" />
@@ -172,6 +176,40 @@ export default function Phase1UI({
           <span className="ml-auto text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
         </nav>
 
+        {/* ── Floating HUD Message Pill ── */}
+        <AnimatePresence>
+          {message && (
+            <motion.div
+              initial={{ opacity: 0, y: -30, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -30, x: "-50%" }}
+              style={{
+                position: "fixed",
+                top: "85px",
+                left: "50%",
+                zIndex: 100,
+                padding: "10px 24px",
+                borderRadius: "30px",
+                background: isError ? "rgba(255, 68, 102, 0.1)" : "rgba(0, 255, 136, 0.1)",
+                border: `1px solid ${isError ? "rgba(255, 68, 102, 0.3)" : "rgba(0, 255, 136, 0.3)"}`,
+                boxShadow: `0 0 20px ${isError ? "rgba(255, 68, 102, 0.15)" : "rgba(0, 255, 136, 0.15)"}`,
+                color: isError ? "#ff4466" : "#00ff88",
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: "0.85rem",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                backdropFilter: "blur(10px)"
+              }}
+            >
+              <span style={{ fontSize: "1rem" }}>{isError ? "⚠" : "✓"}</span>
+              {message}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Hero */}
         <header className="pt-[140px] px-10 pb-20 max-w-[900px] mx-auto">
           <div className="flex items-center gap-2 text-[0.68rem] text-[#8892a4] tracking-[0.14em] uppercase mb-6">
@@ -183,7 +221,7 @@ export default function Phase1UI({
           </h1>
         </header>
 
-        {/* Staggered Card Grid - Logic from phase1.css */}
+        {/* Staggered Card Grid */}
         <div className="max-w-[1280px] mx-auto px-15 pb-[220px]">
           {rows.map(([left, right], idx) => {
             const isOddRow = idx % 2 === 0;
@@ -192,43 +230,40 @@ export default function Phase1UI({
                 <ClueCard 
                    clue={left} solved={!!solved?.[left.id]} 
                    answer={answers?.[left.id] ?? ""} 
+                   wrongSignal={wrongSignal?.[left.id] ?? 0}
                    onAnswerChange={(v) => onAnswerChange(left.id, v)} 
-                   onSubmit={() => onSubmit(left.id)} 
+                   onSubmit={() => onSubmit(left.id)}
+                   isActive={!solved?.[left.id]}
                 />
               </div>
             );
             return (
               <div key={left.id} className="grid grid-cols-1 md:grid-cols-[1fr_100px_1fr] mb-[100px] items-start">
-                <div className={`flex justify-center md:justify-end md:pr-7 ${isOddRow ? "md:pb-[100px]" : "md:pt-[120px]"}`}>
+                <div className={`flex justify-center md:justify-end md:pr-7 ${isOddRow ? "md:pb-[100px]" : ""}`}>
                   <ClueCard 
                     clue={left} solved={!!solved?.[left.id]} 
                     answer={answers?.[left.id] ?? ""} 
+                    wrongSignal={wrongSignal?.[left.id] ?? 0}
                     onAnswerChange={(v) => onAnswerChange(left.id, v)} 
-                    onSubmit={() => onSubmit(left.id)} delay={0} 
+                    onSubmit={() => onSubmit(left.id)} delay={0}
+                    isActive={!solved?.[left.id]}
                   />
                 </div>
                 <div className="hidden md:block" />
-                <div className={`flex justify-center md:justify-start md:pl-7 ${isOddRow ? "md:pt-[140px]" : "md:pb-[100px]"}`}>
+                <div className={`flex justify-center md:justify-start md:pl-7 ${isOddRow ? "md:pt-[140px]" : "md:pt-[140px]"}`}>
                   <ClueCard 
                     clue={right} solved={!!solved?.[right.id]} 
                     answer={answers?.[right.id] ?? ""} 
+                    wrongSignal={wrongSignal?.[right.id] ?? 0}
                     onAnswerChange={(v) => onAnswerChange(right.id, v)} 
-                    onSubmit={() => onSubmit(right.id)} delay={180} 
+                    onSubmit={() => onSubmit(right.id)} delay={180}
+                    isActive={!solved?.[right.id]}
                   />
                 </div>
               </div>
             );
           })}
         </div>
-
-        {/* Sticky Message Banner */}
-        {message && (
-          <div className="sticky bottom-8 flex justify-center z-50 pointer-events-none px-4">
-            <p className="bg-[#050709]/92 border border-[#00ffcc]/25 rounded-full px-[30px] py-2.5 text-[0.85rem] text-[#00ffcc] tracking-[0.06em] backdrop-blur-xl shadow-[0_0_24px_rgba(0,255,204,0.12)]">
-              {message}
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

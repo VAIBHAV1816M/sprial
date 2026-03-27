@@ -1,23 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import ClueCard from "./ClueCard";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-type Clue = {
-  id: string;
-  question: string;
-};
-
-type Props = {
-  clues: Clue[];
-  solved: Record<string, boolean>;
-  answers: Record<string, string>;
-  onAnswerChange: (clueId: string, value: string) => void;
-  onSubmit: (clueId: string) => void;
-  message: string;
-};
 
 interface Orb {
   x: number; y: number;
@@ -25,7 +9,6 @@ interface Orb {
   r: number; base: number; alpha: number;
 }
 
-// ─── Background shape config ──────────────────────────────────────────────────
 const SHAPES = [
   { left: "48%", top: 80, size: 260, teal: true, spd: 20, dir: 1, op: 1.00 },
   { left: "72%", top: 260, size: 160, teal: false, spd: 28, dir: -1, op: 0.55 },
@@ -39,7 +22,6 @@ const SHAPES = [
   { left: "60%", top: 1500, size: 170, teal: false, spd: 26, dir: -1, op: 0.35 },
 ];
 
-// ─── Rotating shape ──────────────────────────────────────────────────────────
 function RotatingShape({ teal = true }: { teal?: boolean }) {
   const c = teal ? "rgba(0,255,204," : "rgba(167,139,250,";
   return (
@@ -58,9 +40,7 @@ function RotatingShape({ teal = true }: { teal?: boolean }) {
   );
 }
 
-export default function Phase1UI({
-  clues, solved, answers, onAnswerChange, onSubmit, message,
-}: Props) {
+export default function CyberBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const shapeRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -999, y: -999 });
@@ -129,21 +109,17 @@ export default function Phase1UI({
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
-  const rows: Array<[Clue, Clue | null]> = [];
-  for (let i = 0; i < clues.length; i += 2) { rows.push([clues[i], clues[i + 1] ?? null]); }
-  const solvedCount = Object.values(solved).filter(Boolean).length;
-
   return (
-    <div className="bg-[#050709] min-h-screen text-[#e8eaf0] font-dm selection:bg-neon-teal/30">
+    <>
       {/* Canvas Layer */}
-      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none block" />
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none block opacity-60" />
 
       {/* Ambient Glow Blobs */}
       <div className="fixed top-[-150px] left-[-150px] w-[600px] h-[600px] rounded-full blur-[100px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(0,255,204,0.07)_0%,transparent_70%)]" />
       <div className="fixed top-[25%] right-[-120px] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(167,139,250,0.06)_0%,transparent_70%)]" />
 
       {/* Rotating Background Shapes */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-40">
         {SHAPES.map((s, i) => (
           <div
             key={i}
@@ -161,61 +137,6 @@ export default function Phase1UI({
           </div>
         ))}
       </div>
-
-      {/* Content Layer */}
-      <div className="relative z-10 min-h-screen">
-        {/* Nav */}
-        <nav className="fixed top-0 inset-x-0 z-[100] flex items-center gap-2.5 px-10 py-[18px] bg-[#050709]/82 backdrop-blur-[14px] border-b border-[#00ffcc]/10">
-          <span className="font-syne font-extrabold text-[1rem]">Phase 1</span>
-          <span className="text-[#8892a4] text-[0.8rem]">/</span>
-          <span className="text-[0.88rem] text-[#8892a4]">Clues & Answers</span>
-          <span className="ml-2 text-[0.75rem] text-[#8892a4]">{solvedCount}/{clues.length} solved</span>
-          <span className="ml-auto text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
-        </nav>
-
-        {/* Hero */}
-        <div className="pt-[140px] px-10 pb-20 max-w-[900px] mx-auto">
-          <div className="flex items-center gap-2 text-[0.68rem] text-[#8892a4] tracking-[0.14em] uppercase mb-6">
-            <span className="w-1.5 h-1.5 bg-[#00ffcc] rounded-full shadow-[0_0_8px_#00ffcc] animate-pulse" />
-            Phase 1 — Reveal
-          </div>
-          <h1 className="font-syne font-extrabold text-[clamp(2.2rem,5vw,4rem)] leading-[1.12] bg-gradient-to-br from-[#e8eaf0] via-[#e8eaf0] to-[#00ffcc] bg-clip-text text-transparent">
-            Uncover the clues one by one.
-          </h1>
-        </div>
-
-        {/* Card Grid */}
-        <div className="max-w-[1280px] mx-auto px-15 pb-[220px]">
-          {rows.map(([left, right], idx) => {
-            const isOddRow = idx % 2 === 0;
-            if (!right) return (
-              <div key={left.id} className="flex justify-center mb-20 pt-10">
-                <ClueCard clue={left} solved={!!solved?.[left.id]} answer={answers?.[left.id] ?? ""} onAnswerChange={(v) => onAnswerChange(left.id, v)} onSubmit={() => onSubmit(left.id)} />
-              </div>
-            );
-            return (
-              <div key={left.id} className="grid grid-cols-1 md:grid-cols-[1fr_100px_1fr] mb-[100px] items-start">
-                <div className={`flex justify-center md:justify-end md:pr-7 ${isOddRow ? "md:pb-[100px]" : "md:pt-[120px]"}`}>
-                  <ClueCard clue={left} solved={!!solved?.[left.id]} answer={answers?.[left.id] ?? ""} onAnswerChange={(v) => onAnswerChange(left.id, v)} onSubmit={() => onSubmit(left.id)} delay={0} />
-                </div>
-                <div className="hidden md:block" />
-                <div className={`flex justify-center md:justify-start md:pl-7 ${isOddRow ? "md:pt-[140px]" : "md:pb-[100px]"}`}>
-                  <ClueCard clue={right} solved={!!solved?.[right.id]} answer={answers?.[right.id] ?? ""} onAnswerChange={(v) => onAnswerChange(right.id, v)} onSubmit={() => onSubmit(right.id)} delay={180} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Message Banner */}
-        {message && (
-          <div className="sticky bottom-8 flex justify-center z-50 pointer-events-none px-4">
-            <p className="bg-[#050709]/92 border border-[#00ffcc]/25 rounded-full px-[30px] py-2.5 text-[0.85rem] text-[#00ffcc] tracking-[0.06em] backdrop-blur-xl shadow-[0_0_24px_rgba(0,255,204,0.12)]">
-              {message}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
+    </>
   );
 }

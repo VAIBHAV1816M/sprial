@@ -20,9 +20,10 @@ function midPoint(cx: number, cy: number, r: number, s: number, e: number) {
   return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
 }
 
-const CX = 100, CY = 100;
-const OR = 95, OW = 36;
-const IR = 52, IW = 20;
+// SCALED UP DIMENSIONS
+const CX = 140, CY = 140;
+const OR = 130, OW = 45;
+const IR = 75, IW = 26;
 
 const SEGMENTS = [
   { id: "c44", label: "C44", ms: [-80, -10] as [number,number], subId: "c4",  ss: [-74, -16] as [number,number] },
@@ -45,9 +46,9 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
       initial={{ opacity: 0, scale: 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      style={{ position: "relative", width: 420, height: 420, flexShrink: 0 }}
+      style={{ position: "relative", width: 500, height: 500, flexShrink: 0 }}
     >
-      <svg viewBox="-15 -15 230 230" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <svg viewBox="-20 -20 320 320" width="100%" height="100%" style={{ overflow: "visible" }}>
         <defs>
           <radialGradient id="hubGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%"   stopColor="#0d2218" />
@@ -56,8 +57,8 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
         </defs>
 
         {/* Ambient outer rings */}
-        <circle cx={CX} cy={CY} r={OR + 16} fill="none" stroke="rgba(0,255,204,0.04)" strokeWidth={1.5} />
-        <circle cx={CX} cy={CY} r={OR + 26} fill="none" stroke="rgba(0,255,204,0.02)" strokeWidth={1} />
+        <circle cx={CX} cy={CY} r={OR + 20} fill="none" stroke="rgba(0,255,204,0.04)" strokeWidth={1.5} />
+        <circle cx={CX} cy={CY} r={OR + 32} fill="none" stroke="rgba(0,255,204,0.02)" strokeWidth={1} />
 
         {/* Base tracks */}
         <circle cx={CX} cy={CY} r={OR} fill="none" stroke="rgba(0,255,204,0.05)" strokeWidth={OW} />
@@ -93,9 +94,9 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
                 strokeWidth={isActive ? 1.5 : 0.6}
               />
               <text
-                x={lp.x} y={lp.y + 4}
+                x={lp.x} y={lp.y + 5}
                 textAnchor="middle"
-                fontSize={isSolved ? 11 : 9}
+                fontSize={isSolved ? 14 : 11}
                 fill={isSolved ? "#34d399" : "#00ffcc"}
                 fontFamily="Syne, sans-serif"
                 fontWeight={700}
@@ -117,8 +118,14 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
           return (
             <motion.g
               key={subId}
-              style={{ cursor: unlocked ? "pointer" : "default", pointerEvents: unlocked ? "all" : "none" }}
-              onClick={() => unlocked && onSelectSub(subId, i)}
+              // FIX: Removed pointerEvents bug. Now relying solely on React JS logic.
+              style={{ cursor: unlocked ? "pointer" : "default" }}
+              onClick={() => {
+                // Ignore clicks if the segment isn't unlocked yet
+                if (unlocked) {
+                  onSelectSub(subId, i);
+                }
+              }}
               animate={{
                 opacity: isSolved ? 0.9 : isActive ? 1 : unlocked ? 0.72 : 0.18,
                 filter: isActive
@@ -139,7 +146,7 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
               <text
                 x={lp.x} y={lp.y + 3}
                 textAnchor="middle"
-                fontSize={7}
+                fontSize={8}
                 fill="#a78bfa"
                 fontFamily="Syne, sans-serif"
                 fontWeight={700}
@@ -151,10 +158,10 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
         })}
 
         {/* HUB */}
-        <circle cx={CX} cy={CY} r={38} fill="url(#hubGrad)" stroke="rgba(0,255,204,0.3)" strokeWidth={1.5} />
-        <circle cx={CX} cy={CY} r={31} fill="none" stroke="rgba(0,255,204,0.08)" strokeWidth={1} strokeDasharray="3 5" />
-        <text x={CX} y={CY - 5} textAnchor="middle" fontFamily="Syne, sans-serif" fontWeight={800} fontSize={9} fill="#00ffcc">PHASE</text>
-        <text x={CX} y={CY + 8} textAnchor="middle" fontFamily="Syne, sans-serif" fontWeight={800} fontSize={9} fill="#00ffcc">TWO</text>
+        <circle cx={CX} cy={CY} r={44} fill="url(#hubGrad)" stroke="rgba(0,255,204,0.3)" strokeWidth={1.5} />
+        <circle cx={CX} cy={CY} r={36} fill="none" stroke="rgba(0,255,204,0.08)" strokeWidth={1} strokeDasharray="4 6" />
+        <text x={CX} y={CY - 6} textAnchor="middle" fontFamily="Syne, sans-serif" fontWeight={800} fontSize={11} fill="#00ffcc">PHASE</text>
+        <text x={CX} y={CY + 10} textAnchor="middle" fontFamily="Syne, sans-serif" fontWeight={800} fontSize={11} fill="#00ffcc">TWO</text>
       </svg>
     </motion.div>
   );

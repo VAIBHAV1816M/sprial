@@ -7,7 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 type Props = {
   clue: any;
   solved: boolean;
+  isActive: boolean;
   answer: string;
+  wrongSignal: number;
   onAnswerChange: (val: string) => void;
   onSubmit: () => void;
   delay?: number;
@@ -29,33 +31,24 @@ const CheckIcon = () => (
   </svg>
 );
 
-const AnswerIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth={1.5} className="w-[22px] h-[22px]">
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-);
-
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function ClueCard({
   clue,
   solved,
+  isActive,
   answer,
+  wrongSignal,
   onAnswerChange,
   onSubmit,
   delay = 0,
 }: Props) {
+
   const [isFlipped, setIsFlipped] = useState(false);
   const [wrongFlash, setWrongFlash] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const wrongFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const submitCheckTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // ✅ Latest solved reference for stale state protection
-  const solvedRef = useRef(solved);
-  useEffect(() => {
-    solvedRef.current = solved;
-  }, [solved]);
+  const lastSubmitRef = useRef<number>(0);
 
   // ── Auto focus when flipped ──────────────────────────────────
   useEffect(() => {
@@ -64,33 +57,56 @@ export default function ClueCard({
     }
   }, [isFlipped, solved]);
 
-  // ── Clear timers when solved ─────────────────────────────────
+  // ── Reset when solved ────────────────────────────────────────
   useEffect(() => {
     if (solved) {
       setWrongFlash(false);
-      if (wrongFlashTimerRef.current) clearTimeout(wrongFlashTimerRef.current);
-      if (submitCheckTimerRef.current) clearTimeout(submitCheckTimerRef.current);
+      if (wrongFlashTimerRef.current) {
+        clearTimeout(wrongFlashTimerRef.current);
+      }
     }
   }, [solved]);
 
-  // ── Submit logic ─────────────────────────────────────────────
-  const handleSubmit = () => {
-    onSubmit();
-
-    if (submitCheckTimerRef.current) clearTimeout(submitCheckTimerRef.current);
-
-    submitCheckTimerRef.current = setTimeout(() => {
-      if (!solvedRef.current) {
-        setWrongFlash(true);
-        if (wrongFlashTimerRef.current) clearTimeout(wrongFlashTimerRef.current);
-        wrongFlashTimerRef.current = setTimeout(() => {
-          setWrongFlash(false);
-        }, 1500);
+  // ── Clear red flash when flipped back ────────────────────────
+  useEffect(() => {
+    if (!isFlipped && wrongFlash) {
+      setWrongFlash(false);
+      if (wrongFlashTimerRef.current) {
+        clearTimeout(wrongFlashTimerRef.current);
       }
-    }, 280);
+    }
+  }, [isFlipped]);
+
+  // ── Trigger wrong animation from parent signal ────────────
+  useEffect(() => {
+    if (wrongSignal > 0) {
+      triggerWrongFlash();
+    }
+  }, [wrongSignal]);
+
+  const triggerWrongFlash = () => {
+    setWrongFlash(true);
+    if (wrongFlashTimerRef.current) clearTimeout(wrongFlashTimerRef.current);
+    wrongFlashTimerRef.current = setTimeout(() => {
+      setWrongFlash(false);
+    }, 2500);
   };
 
-  const handleCardClick = () => {
+  const handleSubmit = () => {
+    if (solved) return; 
+    const now = Date.now();
+    if (now - lastSubmitRef.current < 500) return;
+    lastSubmitRef.current = now;
+    onSubmit();
+  };
+
+  // FIXED: Removed isAnimating lock to allow instant flipping and unflipping
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+
+    // Prevent flip when clicking input, button, or the scrollbar area
+    if (target.closest("input") || target.closest("button") || target.className.toString().includes("clue-scroll")) return;
+
     setIsFlipped((prev) => !prev);
   };
 
@@ -99,14 +115,14 @@ export default function ClueCard({
   const tipText = isFlipped
     ? "Click to close"
     : solved
-    ? "Click to see answer"
-    : "Click to answer";
+    ? "Solved - Click to view"
+    : "Click to reveal";
 
   return (
     <motion.div
-      className="group relative w-[480px] h-[280px] shrink-0 cursor-pointer [perspective:1200px] max-[900px]:w-[340px] max-[900px]:h-[220px] max-[520px]:w-[90vw]"
+      data-clue-id={clue.id}
+      className="group relative w-[480px] h-[280px] shrink-0 [perspective:1200px] max-[900px]:w-[340px] max-[900px]:h-[220px] max-[520px]:w-[90vw] cursor-pointer"
       onClick={handleCardClick}
-      // Native Scroll Reveal logic
       initial={{ opacity: 0, rotateY: -10 }}
       whileInView={{ opacity: 1, rotateY: 0 }}
       viewport={{ once: true, margin: "0px 0px -40px 0px" }}
@@ -115,8 +131,9 @@ export default function ClueCard({
         rotateY: { duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: delay / 1000 }
       }}
     >
+
       {/* Tooltip */}
-      <div className="absolute -bottom-[28px] left-1/2 -translate-x-1/2 text-[0.58rem] tracking-[0.1em] uppercase text-[#00ffcc]/[0.35] opacity-0 transition-opacity duration-250 pointer-events-none whitespace-nowrap z-20 font-dm group-hover:opacity-100">
+      <div className="absolute -bottom-[28px] left-1/2 -translate-x-1/2 text-[0.58rem] tracking-[0.1em] uppercase text-[#00ffcc]/[0.4] opacity-0 transition-opacity duration-250 pointer-events-none whitespace-nowrap z-20 font-mono group-hover:opacity-100">
         {tipText}
       </div>
 
@@ -125,82 +142,128 @@ export default function ClueCard({
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* FRONT FACE */}
+
+        {/* ─── FRONT OF CARD ─── */}
         <div
-          className={`absolute inset-0 [backface-visibility:hidden] rounded-[20px] flex flex-col p-[24px_28px_26px] border-[1.5px] transition-all duration-400 justify-between
+          className={`absolute inset-0 [backface-visibility:hidden] rounded-[20px] flex flex-col p-[24px_28px_26px] border-[1px] transition-all duration-400 justify-between backdrop-blur-md
           ${solved 
-            ? "bg-[#061410] border-[#34d399]/90 shadow-[0_0_30px_rgba(52,211,153,0.65),0_0_80px_rgba(52,211,153,0.12),inset_0_0_32px_rgba(52,211,153,0.06)]" 
+            ? "bg-[rgba(6,20,16,0.85)] border-[#34d399]/60 shadow-[0_0_30px_rgba(52,211,153,0.3),inset_0_0_20px_rgba(52,211,153,0.1)]" 
             : wrongFlash
-            ? "border-[#ef4444]/90 shadow-[0_0_36px_rgba(239,68,68,0.75),0_0_90px_rgba(239,68,68,0.14),inset_0_0_30px_rgba(239,68,68,0.07)]"
-            : "bg-[#0a1512] border-[#00ffcc]/50 shadow-[0_0_18px_rgba(0,255,204,0.22),0_0_55px_rgba(0,255,204,0.05),inset_0_0_28px_rgba(0,255,204,0.03)] group-hover:border-[#00ffcc]/80 group-hover:shadow-[0_0_32px_rgba(0,255,204,0.40),0_0_80px_rgba(0,255,204,0.08),inset_0_0_32px_rgba(0,255,204,0.05)]"
+            ? "bg-[rgba(20,5,5,0.85)] border-[#ef4444]/70 shadow-[0_0_36px_rgba(239,68,68,0.4)]"
+            : "bg-[rgba(7,9,13,0.85)] border-[#00ffcc]/30 shadow-[0_10px_30px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(0,255,204,0.05)] hover:border-[#00ffcc]/60 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_30px_rgba(0,255,204,0.15)]"
           }`}
         >
-          {/* Subtle blur overlay border */}
-          <div className={`absolute inset-[-1px] rounded-[21px] border pointer-events-none blur-[1.5px] transition-all duration-400
-            ${solved ? "border-[#34d399]/50" : wrongFlash ? "border-[#ef4444]/50" : "border-[#00ffcc]/28"}`} 
-          />
-
-          <div className="flex justify-between items-start relative z-10">
+          <div className="flex justify-between items-start">
             <div>{solved ? <CheckIcon /> : <QuestionIcon />}</div>
-            <div className="grid grid-cols-2 gap-[3px]">
-              {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="w-[6px] h-[6px] border-[1.5px] border-[#00ffcc]/[0.22]" />
-              ))}
-            </div>
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10">
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
             {solved ? (
               <>
-                <p className="text-[0.64rem] text-[#8892a4] mb-1">Your Answer</p>
-                <p className="font-bold text-[#a78bfa] text-lg tracking-wide uppercase">{answer}</p>
+                <p className="text-[#8892a4] text-[0.65rem] uppercase tracking-[0.2em] mb-2 font-mono">Decrypted Value</p>
+                <p className="font-bold text-[#34d399] text-xl uppercase tracking-wider font-orbitron">{answer}</p>
               </>
             ) : (
-              <span className="font-bold text-[#e8eaf0] text-xl tracking-tight">Clue {clue.id}</span>
+              <span className="font-bold text-[#e8eaf0] text-xl font-syne tracking-wide">
+                Clue {clue.id.replace("clue", "")}
+              </span>
             )}
           </div>
 
-          {solved && <div className="text-center text-[#34d399] text-xs font-dm tracking-widest uppercase relative z-10">✓ Solved</div>}
-        </div>
-
-        {/* BACK FACE */}
-        <div
-          className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[20px] flex flex-row items-center p-[24px_28px_26px] gap-6 bg-[#080e18] border-[1.5px] border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.14),inset_0_0_28px_rgba(167,139,250,0.04)] cursor-default"
-          onClick={stopProp}
-        >
-          <div className="flex-1">
-            <div className="mb-3"><AnswerIcon /></div>
-            <p className="text-[#e8eaf0] font-dm text-sm leading-relaxed">{clue.question}</p>
-          </div>
-
-          {solved ? (
-            <div className="p-[10px_18px] rounded-[11px] bg-[#34d399]/[0.09] border border-[#34d399]/[0.32] text-[#34d399] text-xs font-bold whitespace-nowrap">
-              ✓ Solved
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3 min-w-[140px]">
-              <input
-                ref={inputRef}
-                className="w-full bg-[#00ffcc]/[0.04] border border-[#00ffcc]/[0.22] rounded-[11px] p-[11px_14px] text-[#e8eaf0] text-sm focus:border-[#00ffcc]/[0.55] outline-none transition-colors"
-                value={answer}
-                onChange={(e) => onAnswerChange(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                onClick={stopProp}
-                placeholder="Enter answer..."
-              />
-              <button
-                className="w-full p-[11px_22px] rounded-[11px] bg-[#00ffcc]/[0.09] border border-[#00ffcc]/[0.32] text-[#00ffcc] text-xs font-bold uppercase tracking-wider cursor-pointer disabled:opacity-35 transition-all hover:bg-[#00ffcc]/20"
-                disabled={!answer.trim()}
-                onClick={(e) => {
-                  stopProp(e);
-                  handleSubmit();
-                }}
-              >
-                Submit
-              </button>
+          {solved && (
+            <div className="text-center text-[#34d399] text-[0.65rem] uppercase tracking-widest font-mono flex items-center justify-center gap-2">
+              <span className="w-1.5 h-1.5 bg-[#34d399] rounded-full animate-pulse" />
+              Integrated
             </div>
           )}
         </div>
+
+        {/* ─── BACK OF CARD (Flipped State) ─── */}
+        <div
+          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-[20px] flex flex-row items-stretch p-[24px] gap-5 border-[1px] transition-all duration-300
+            ${wrongFlash
+              ? "bg-[rgba(26,7,7,0.95)] border-[#ef4444]/70 shadow-[0_0_40px_rgba(239,68,68,0.25),inset_0_0_30px_rgba(239,68,68,0.1)]"
+              : solved
+              ? "bg-[rgba(6,20,16,0.95)] border-[#34d399]/40 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_0_20px_rgba(52,211,153,0.05)] backdrop-blur-xl"
+              : "bg-[rgba(7,9,13,0.95)] border-[#00ffcc]/40 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_0_20px_rgba(0,255,204,0.05)] backdrop-blur-xl"
+            }`}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            // Allow interactions with input and button without flipping the card
+            if (target.closest("input") || target.closest("button")) {
+              e.stopPropagation();
+              return;
+            }
+          }}
+        >
+          <style dangerouslySetInnerHTML={{ __html: `
+            .clue-scroll::-webkit-scrollbar { width: 4px; }
+            .clue-scroll::-webkit-scrollbar-track { background: transparent; }
+            .clue-scroll::-webkit-scrollbar-thumb { background: rgba(0, 255, 204, 0.2); border-radius: 4px; }
+            .clue-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 204, 0.4); }
+          `}} />
+
+          {/* Left Side: Question Area */}
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className="flex items-center gap-2 mb-4 shrink-0">
+              <span className={`w-1.5 h-1.5 rounded-full ${wrongFlash ? "bg-[#ef4444]" : solved ? "bg-[#34d399]" : "bg-[#00ffcc] animate-pulse"}`} />
+              <span className={`font-mono text-[0.65rem] tracking-[0.15em] uppercase ${wrongFlash ? "text-[#ef4444]" : solved ? "text-[#34d399]" : "text-[#00ffcc]"}`}>
+                {wrongFlash ? "Warning // Invalid" : solved ? "Status // Solved" : "Awaiting Input"}
+              </span>
+            </div>
+            <div className="flex-1 overflow-y-auto pr-3 clue-scroll">
+              <p className="text-[#e8eaf0] text-[0.85rem] leading-[1.6] font-dm">{clue.question}</p>
+            </div>
+          </div>
+
+          {/* Right Side: Input & Submit */}
+          <div className="flex flex-col justify-center gap-3 w-[160px] shrink-0 relative">
+            <div className="relative">
+              <input
+                ref={inputRef}
+                className={`w-full bg-[#0c0f14] border rounded-lg py-3 pl-3 pr-3 text-[0.85rem] text-[#e8eaf0] outline-none font-mono transition-colors placeholder:text-[#8892a4]/50
+                  ${wrongFlash 
+                    ? "border-[#ef4444]/50 focus:border-[#ef4444] caret-[#ef4444]" 
+                    : solved
+                    ? "border-[#34d399]/40 text-[#34d399]"
+                    : "border-[#00ffcc]/20 focus:border-[#00ffcc]/60 caret-[#00ffcc]"}`}
+                value={answer}
+                onChange={(e) => onAnswerChange(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder={solved ? "Locked" : "Input..."}
+                disabled={solved}
+              />
+            </div>
+
+            <button
+              className={`w-full py-3 rounded-lg transition-all uppercase text-[0.7rem] font-bold tracking-widest font-orbitron
+                ${wrongFlash 
+                  ? "bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30" 
+                  : solved
+                  ? "bg-[#34d399]/10 text-[#34d399] border border-[#34d399]/30 cursor-default"
+                  : "bg-[#00ffcc]/10 text-[#00ffcc] border border-[#00ffcc]/30 hover:bg-[#00ffcc]/20 hover:shadow-[0_0_15px_rgba(0,255,204,0.2)]"}`}
+              onClick={(e) => {
+                stopProp(e);
+                handleSubmit();
+              }}
+              disabled={solved}
+            >
+              {solved ? "Locked" : "Submit"}
+            </button>
+
+            <AnimatePresence>
+              {wrongFlash && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className="text-[#ef4444] text-[0.58rem] text-center font-mono uppercase tracking-[0.1em] absolute -bottom-6 left-0 w-full"
+                >
+                  Sequence Denied
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
       </motion.div>
     </motion.div>
   );
