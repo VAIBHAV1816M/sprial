@@ -2,40 +2,12 @@
 
 import { motion } from "framer-motion";
 
-const UNLOCK_TIME = new Date("2025-04-04T08:00:00+05:30");
-
-function ComingSoonOverlay() {
-  const now = new Date();
-  if (now >= UNLOCK_TIME) return null;
-  return (
-    <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: "radial-gradient(ellipse at 50% 40%, #06110d 0%, #050709 90%)" }}
-    >
-      <span
-        className="text-[0.6rem] tracking-[0.18em] uppercase px-3 py-1 rounded-full border flex items-center gap-2 mb-6"
-        style={{ color: "rgba(0,255,204,0.6)", borderColor: "rgba(0,255,204,0.18)" }}
-      >
-        <span className="w-[5px] h-[5px] rounded-full bg-[#00ffcc] inline-block" />
-        Locked
-      </span>
-      <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#e8eaf0", fontSize: "2rem" }}>
-        Phase 2 Coming Soon
-      </h1>
-      <p className="text-xs mt-3" style={{ color: "#8892a4" }}>
-        Unlocks on April 4th at 8:00 AM IST
-      </p>
-    </div>
-  );
-}
-
 export default function LoginScreen({ form, loading, message, handleChange, handleLogin }: any) {
   return (
     <div
       className="flex justify-center items-center h-screen"
       style={{ background: "radial-gradient(ellipse at 50% 40%, #06110d 0%, #050709 65%)" }}
     >
-      <ComingSoonOverlay />
       <motion.div
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
