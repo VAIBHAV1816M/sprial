@@ -7,7 +7,7 @@ import { saveToken, getToken } from "../../utils/auth";
 import Phase2UI from "@/components/phase2/Phase2UI";
 
 // ADD this above export default function Phase2()
-const UNLOCK_TIME = new Date("2025-04-04T08:00:00+05:30");
+const UNLOCK_TIME = new Date("2026-04-04T08:00:00+05:30");
 
 function ComingSoonOverlay() {
   const now = new Date();
