@@ -6,6 +6,20 @@ import API from "../../services/api";
 import { saveToken, getToken } from "../../utils/auth";
 import Phase2UI from "@/components/phase2/Phase2UI";
 
+// ADD this above export default function Phase2()
+const UNLOCK_TIME = new Date("2025-04-04T08:00:00+05:30");
+
+function ComingSoonOverlay() {
+  const now = new Date();
+  if (now >= UNLOCK_TIME) return null;
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 flex flex-col items-center justify-center text-white">
+      <h1 className="text-3xl font-bold mb-2">Phase 2 Coming Soon</h1>
+      <p className="text-lg">Unlocks on April 4th at 8:00 AM IST</p>
+    </div>
+  );
+}
+
 export default function Phase2() {
   const router = useRouter(); // Initialize router
 
@@ -150,18 +164,21 @@ export default function Phase2() {
   };
 
   return (
-    <Phase2UI
-      checkingAuth={checkingAuth}
-      isAllowed={isAllowed}
-      form={form}
-      message={message}
-      loading={loading}
-      progress={progress}
-      answers={answers}
-      handleChange={handleChange}
-      handleLogin={handleLogin}
-      handleAnswerChange={handleAnswerChange}
-      handleSubmit={handleSubmit}
-    />
+    <>
+      <ComingSoonOverlay />
+      <Phase2UI
+        checkingAuth={checkingAuth}
+        isAllowed={isAllowed}
+        form={form}
+        message={message}
+        loading={loading}
+        progress={progress}
+        answers={answers}
+        handleChange={handleChange}
+        handleLogin={handleLogin}
+        handleAnswerChange={handleAnswerChange}
+        handleSubmit={handleSubmit}
+      />
+    </>
   );
 }
