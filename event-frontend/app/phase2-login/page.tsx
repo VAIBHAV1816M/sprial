@@ -5,7 +5,7 @@ import API from "../../services/api";
 import { saveToken } from "../../utils/auth";
 
 // ADD this above the export default function line
-const UNLOCK_TIME = new Date("2025-04-04T08:00:00+05:30");
+const UNLOCK_TIME = new Date("2026-04-04T08:00:00+05:30");
 
 function ComingSoonOverlay() {
   const now = new Date();
