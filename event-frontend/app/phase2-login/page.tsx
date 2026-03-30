@@ -76,7 +76,9 @@ export default function Phase2Login() {
   };
 
     return (
-        <h1 className="text-2xl font-bold mb-6 text-center">Phase 2 Login</h1>
+    <div className="flex justify-center items-center h-screen">
+      <div className="w-[400px] p-8 border rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold mb-6 text-center">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             name="email"
