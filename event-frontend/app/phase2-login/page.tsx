@@ -124,5 +124,3 @@ export default function Phase2Login() {
     </div>
   );
 }
-
-}
