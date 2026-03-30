@@ -4,20 +4,6 @@ import { useState } from "react";
 import API from "../../services/api";
 import { saveToken } from "../../utils/auth";
 
-// ADD this above the export default function line
-const UNLOCK_TIME = new Date("2026-04-04T08:00:00+05:30");
-
-function ComingSoonOverlay() {
-  const now = new Date();
-  if (now >= UNLOCK_TIME) return null;
-  return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex flex-col items-center justify-center text-white">
-      <h1 className="text-3xl font-bold mb-2">Phase 2 Coming Soon</h1>
-      <p className="text-lg">Unlocks on April 4th at 8:00 AM IST</p>
-    </div>
-  );
-}
-
 export default function Phase2Login() {
 
   const [form, setForm] = useState({
@@ -90,9 +76,6 @@ export default function Phase2Login() {
   };
 
     return (
-    <div className="flex justify-center items-center h-screen">
-      <ComingSoonOverlay />
-      <div className="w-[400px] p-8 border rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold mb-6 text-center">Phase 2 Login</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
