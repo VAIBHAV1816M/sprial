@@ -5,23 +5,26 @@ const routes: Record<string, string> = {
   "fire-777": "/phase3",
 };
 
-export default function SlugPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const slug = params.slug.toLowerCase();
+export default function Page({ params }: any) {
+  try {
+    const slug = params?.slug?.toLowerCase();
 
-  const target = routes[slug];
+    if (!slug) {
+      return <h1>Invalid request</h1>;
+    }
 
-  if (target) {
-    redirect(target);
+    const target = routes[slug];
+
+    if (target) {
+      redirect(target);
+    }
+
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <h1>❌ Invalid name</h1>
+      </div>
+    );
+  } catch (error) {
+    return <h1>Something went wrong</h1>;
   }
-
-  return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>❌ Invalid name</h1>
-      <p>Clue is incorrect</p>
-    </div>
-  );
 }
