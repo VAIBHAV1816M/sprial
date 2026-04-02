@@ -6,7 +6,6 @@ import ClueHex from "./ClueHex";
 import CluePanel from "./CluePanel";
 import CompletionScreen from "./CompletionScreen";
 import ParticleBackground from "./ParticleBackground";
-import Overlay from "@/components/overlay/Overlay"; // ✅ ADDED
 
 type Props = {
   message: string;
@@ -59,22 +58,50 @@ const LoginScreen = ({
           boxShadow: "0 0 80px rgba(0,229,255,0.04), 0 24px 48px rgba(0,0,0,0.6)",
         }}
       >
-        <h1 style={{ color: "#e8eaf0" }}>Authentication</h1>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
+          <span style={{
+            fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase",
+            padding: "4px 12px", borderRadius: "99px", border: "1px solid rgba(0,229,255,0.18)", 
+            color: "rgba(0,229,255,0.6)", display: "flex", alignItems: "center", gap: "8px", width: "fit-content"
+          }}>
+            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#00e5ff" }} className="animate-pulse" />
+            Phase 3 // Secure Access
+          </span>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+          <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#e8eaf0", fontSize: "1.6rem", lineHeight: 1.2 }}>
+            Authentication
+          </h1>
+          <p style={{ fontSize: "0.75rem", color: "#8892a4" }}>Establish secure link to Core Data Integration.</p>
+        </motion.div>
+
+        <div style={{ height: "1px", background: "linear-gradient(90deg, rgba(0,229,255,0.18), transparent)" }} />
 
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
-          <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
-
-          <button type="submit" disabled={loading}>
-            {loading ? "Authenticating..." : "Login"}
-          </button>
+          {[
+            { name: "email", type: "email", label: "Email", placeholder: "agent@network.io" },
+            { name: "password", type: "password", label: "Security Key", placeholder: "••••••••" },
+          ].map((field, i) => (
+            <motion.div key={field.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 + i * 0.07 }} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <label style={{ fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8892a4", fontFamily: "'Share Tech Mono', monospace" }}>{field.label}</label>
+              <input name={field.name} type={field.type} placeholder={field.placeholder} onChange={handleChange} required style={{
+                  background: "#0c0f14", border: "1px solid rgba(0,229,255,0.18)", borderRadius: "8px",
+                  padding: "12px 16px", fontSize: "0.85rem", color: "#e8eaf0", outline: "none",
+                  fontFamily: "'Share Tech Mono', monospace", caretColor: "#00e5ff", transition: "border-color 0.2s"
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.45)")}
+                onBlur={(e)  => (e.target.style.borderColor = "rgba(0,229,255,0.18)")}
+              />
+            </motion.div>
+          ))}
+          <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{
+              marginTop: "8px", background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.3)", borderRadius: "8px", padding: "12px", color: "#00e5ff", fontFamily: "'Orbitron', monospace", fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: "bold", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, transition: "background 0.2s"
+            }}>
+            {loading ? "Authenticating..." : "Authenticate"}
+          </motion.button>
         </form>
-
-        {message && (
-          <p style={{ color: isError ? "#ff4466" : "#00ff88" }}>
-            {message}
-          </p>
-        )}
+        {message && <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", fontSize: "0.75rem", color: isError ? "#ff4466" : "#00ff88", fontFamily: "'Share Tech Mono', monospace" }}>{message}</motion.p>}
       </motion.div>
     </div>
   );
@@ -85,13 +112,9 @@ const Phase3UI = ({
   message, loading, isAllowed, checkingAuth, progress, answers,
   isEventComplete, handleChange, handleLogin, handleAnswerChange, handleSubmit,
 }: Props) => {
-
   const [activeClue, setActiveClue] = useState<string | null>(null);
 
-  // ✅ ADDED: Overlay while checking auth
-  if (checkingAuth) {
-    return <Overlay show={true} message="Verifying Access..." />;
-  }
+  if (checkingAuth) return null;
 
   if (!isAllowed) {
     return <LoginScreen handleLogin={handleLogin} handleChange={handleChange} loading={loading} message={message} />;
@@ -105,32 +128,107 @@ const Phase3UI = ({
   const isError = message.toLowerCase().includes("wrong") || message.toLowerCase().includes("error");
 
   return (
-    <div className="h-screen w-screen relative">
+    <div
+      className="h-screen w-screen text-[#e8eaf0] font-dm relative overflow-hidden flex flex-col"
+      style={{ background: "radial-gradient(ellipse at 50% 40%, #06110d 0%, #050709 65%)" }}
+    >
+      {/* ── Ambient Glows ── */}
+      <div className="absolute top-[-150px] left-[-150px] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(0,255,204,0.05)_0%,transparent_70%)]" />
+      <div className="absolute bottom-[-150px] right-[-150px] w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(167,139,250,0.04)_0%,transparent_70%)]" />
 
-      {/* ✅ ADDED: Overlay during loading */}
-      <Overlay show={loading} message="Processing..." />
-
-      <div>
-        {clues.map((clue) => (
-          <ClueHex
-            key={clue.id}
-            id={clue.id}
-            title={clue.title}
-            subtitle={clue.subtitle}
-            active={activeClue === clue.id}
-            solved={!!progress?.[clue.id]}
-            onClick={() => handleHexClick(clue.id)}
-          />
-        ))}
+      {/* ── Top Navigation Bar ── */}
+      <div
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "14px 32px", background: "rgba(5,7,9,0.82)", backdropFilter: "blur(14px)",
+          borderBottom: "1px solid rgba(0,255,204,0.1)", position: "relative", zIndex: 50,
+          flexShrink: 0 // Prevents the nav bar from shrinking
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#00ffcc", fontSize: "0.9rem", letterSpacing: "0.1em" }}>PHASE 3</span>
+          <span style={{ fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, background: "rgba(0,255,204,0.06)", border: "1px solid rgba(0,255,204,0.15)", color: "rgba(0,255,204,0.5)" }}>Integration</span>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <span style={{ fontSize: "0.55rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8892a4" }}>Clues Solved</span>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: "#00ffcc", fontSize: "0.85rem" }}>{solvedCount} / 4</span>
+        </div>
       </div>
 
-      <CluePanel
-        activeClue={activeClue}
-        isSolved={activeClue ? !!progress?.[activeClue] : false}
-        answerValue={activeClue ? (answers?.[activeClue] || "") : ""}
-        onAnswerChange={(e) => activeClue && handleAnswerChange(e, activeClue)}
-        onSubmit={() => activeClue && handleSubmit(activeClue)}
-      />
+      {/* ── Floating HUD Message Pill ── */}
+      <AnimatePresence>
+        {message && !isEventComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -30, x: "-50%" }}
+            style={{
+              position: "absolute", top: "85px", left: "50%", zIndex: 100, padding: "10px 24px", borderRadius: "30px",
+              background: isError ? "rgba(255, 68, 102, 0.1)" : "rgba(0, 255, 136, 0.1)", border: `1px solid ${isError ? "rgba(255, 68, 102, 0.3)" : "rgba(0, 255, 136, 0.3)"}`,
+              boxShadow: `0 0 20px ${isError ? "rgba(255, 68, 102, 0.15)" : "rgba(0, 255, 136, 0.15)"}`, color: isError ? "#ff4466" : "#00ff88",
+              fontFamily: "'Share Tech Mono', monospace", fontSize: "0.85rem", letterSpacing: "0.1em", textTransform: "uppercase",
+              display: "flex", alignItems: "center", gap: "8px", backdropFilter: "blur(10px)"
+            }}
+          >
+            <span style={{ fontSize: "1rem" }}>{isError ? "⚠" : "✓"}</span>
+            {message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── CENTERED LAYOUT (Locked to single screen) ── */}
+      <div className="relative w-full max-w-[900px] mx-auto flex flex-col items-center justify-center gap-6 px-6 z-10 flex-1 h-full">
+        
+        {/* TOP: Centered Hero Text */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="w-full text-center flex flex-col items-center"
+        >
+          <div className="flex items-center justify-center gap-2 text-[0.68rem] text-[#8892a4] tracking-[0.14em] uppercase mb-2">
+            <span className="w-1.5 h-1.5 bg-[#00ffcc] rounded-full shadow-[0_0_8px_#00ffcc] animate-pulse" />
+            Phase 3
+          </div>
+          <h1 className="font-syne font-extrabold text-[clamp(2rem,3.5vw,3rem)] leading-[1.1] tracking-wide bg-gradient-to-br from-[#e8eaf0] to-[#00ffcc] bg-clip-text text-transparent uppercase">
+            Core Data Integration
+          </h1>
+          <p className="text-[#8892a4] text-[0.8rem] mt-2 font-mono tracking-widest uppercase">
+            Assemble the final sequence
+          </p>
+        </motion.div>
+
+        {/* MIDDLE: Hexagons perfectly aligned in a single horizontal row */}
+        <motion.div
+          initial="hidden" animate="visible"
+          variants={{ visible: { transition: { staggerChildren: 0.1 } }, hidden: {} }}
+          className="flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-4 w-full"
+        >
+          {clues.map((clue) => (
+            <motion.div key={clue.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+              <ClueHex
+                id={clue.id}
+                title={clue.title}
+                subtitle={clue.subtitle}
+                active={activeClue === clue.id}
+                solved={!!progress?.[clue.id]}
+                onClick={() => handleHexClick(clue.id)}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* BOTTOM: The Terminal Panel (Space strictly reserved so layout doesn't jump) */}
+        <div className="w-full h-[240px] flex justify-center items-start mt-2">
+          <CluePanel
+            activeClue={activeClue}
+            isSolved={activeClue ? !!progress?.[activeClue] : false}
+            answerValue={activeClue ? (answers?.[activeClue] || "") : ""}
+            onAnswerChange={(e) => activeClue && handleAnswerChange(e, activeClue)}
+            onSubmit={() => activeClue && handleSubmit(activeClue)}
+          />
+        </div>
+
+      </div>
 
       <AnimatePresence>
         {isEventComplete && <CompletionScreen />}
