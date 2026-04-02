@@ -100,12 +100,16 @@ export default function ClueCard({
     onSubmit();
   };
 
-  // FIXED: Removed isAnimating lock to allow instant flipping and unflipping
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
 
-    // Prevent flip when clicking input, button, or the scrollbar area
-    if (target.closest("input") || target.closest("button") || target.className.toString().includes("clue-scroll")) return;
+    // Prevent flip when clicking input, button, scrollbar, or the image container
+    if (
+      target.closest("input") || 
+      target.closest("button") || 
+      target.closest(".clue-image-container") ||
+      target.className.toString().includes("clue-scroll")
+    ) return;
 
     setIsFlipped((prev) => !prev);
   };
@@ -189,8 +193,7 @@ export default function ClueCard({
             }`}
           onClick={(e) => {
             const target = e.target as HTMLElement;
-            // Allow interactions with input and button without flipping the card
-            if (target.closest("input") || target.closest("button")) {
+            if (target.closest("input") || target.closest("button") || target.closest(".clue-image-container")) {
               e.stopPropagation();
               return;
             }
@@ -212,6 +215,17 @@ export default function ClueCard({
               </span>
             </div>
             <div className="flex-1 overflow-y-auto pr-3 clue-scroll">
+              {/* Optional Visual Clue Image */}
+              {clue.imageUrl && (
+                <div className="clue-image-container mb-4 relative w-full h-32 rounded-lg overflow-hidden border border-[#00ffcc]/20 group/img">
+                  <img 
+                    src={clue.imageUrl} 
+                    alt="Visual Clue" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-[#00ffcc]/5 pointer-events-none" />
+                </div>
+              )}
               <p className="text-[#e8eaf0] text-[0.85rem] leading-[1.6] font-dm">{clue.question}</p>
             </div>
           </div>
