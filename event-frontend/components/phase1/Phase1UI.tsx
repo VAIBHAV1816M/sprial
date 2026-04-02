@@ -8,6 +8,7 @@ import ClueCard from "./ClueCard";
 type Clue = {
   id: string;
   question: string;
+  imageUrl?: string;
 };
 
 type Props = {
