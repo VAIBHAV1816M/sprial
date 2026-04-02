@@ -125,12 +125,20 @@ if (phase === 1) {
     setLoading(false);
   };
 
-  const handleAnswerChange = (clueId:string, value:string) => {
-    setAnswers({
-      ...answers,
-      [clueId]: value
-    });
-  };
+  const handleSubmit = async (clueId: string) => {
+    try {
+      // Make sure clueId is exactly "clue1", "clue2", etc.
+      const payload = {
+        clueId: clueId,
+        answer: answers[clueId] || ""
+      };
+
+      console.log("Sending Payload:", payload); // Debugging
+
+      const res = await API.post("/phase/phase1/answer", payload);
+
+      setMessage(res.data.message);
+      // ... rest of your code
 
   const handleSubmit = async (clueId:string) => {
     try {
