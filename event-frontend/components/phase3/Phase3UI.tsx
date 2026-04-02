@@ -1,11 +1,91 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Added useEffect for the timer
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ClueHex from "./ClueHex";
 import CluePanel from "./CluePanel";
 import CompletionScreen from "./CompletionScreen";
 import ParticleBackground from "./ParticleBackground";
+
+// --- OVERLAY SECTION (April 5th) ---
+const UNLOCK_TIME = new Date("2026-04-05T08:00:00+05:30");
+
+function ComingSoonOverlay() {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const calc = () => {
+      const diff = UNLOCK_TIME.getTime() - Date.now();
+      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return {
+        days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diff / (1000 * 60)) % 60),
+        seconds: Math.floor((diff / 1000) % 60),
+      };
+    };
+    setTimeLeft(calc());
+    const id = setInterval(() => setTimeLeft(calc()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (!mounted) return null;
+  if (Date.now() >= UNLOCK_TIME.getTime()) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+      style={{ background: "radial-gradient(ellipse at 50% 40%, #06110d 0%, #020304 100%)" }}
+    >
+      <span
+        className="text-[0.6rem] tracking-[0.18em] uppercase px-3 py-1 rounded-full border flex items-center gap-2 mb-8"
+        style={{ color: "rgba(0,255,204,0.6)", borderColor: "rgba(0,255,204,0.18)" }}
+      >
+        <span className="w-[5px] h-[5px] rounded-full bg-[#00ffcc] inline-block animate-pulse" />
+        Locked
+      </span>
+
+      <h1
+        className="text-4xl font-extrabold mb-3 text-center"
+        style={{ fontFamily: "'Syne', sans-serif", color: "#e8eaf0" }}
+      >
+        Phase 3 Coming Soon
+      </h1>
+      <p className="text-sm mb-12" style={{ color: "#8892a4" }}>
+        Unlocks on April 5th at 8:00 AM IST
+      </p>
+
+      <div className="flex gap-4">
+        {[
+          { label: "Days",    value: timeLeft.days },
+          { label: "Hours",   value: timeLeft.hours },
+          { label: "Minutes", value: timeLeft.minutes },
+          { label: "Seconds", value: timeLeft.seconds },
+        ].map(({ label, value }) => (
+          <div
+            key={label}
+            className="flex flex-col items-center justify-center w-20 h-20 rounded-xl"
+            style={{
+              background: "#07090d",
+              border: "1px solid rgba(0,255,204,0.15)",
+              boxShadow: "0 0 20px rgba(0,255,204,0.04)",
+            }}
+          >
+            <span className="text-2xl font-bold font-mono" style={{ color: "#00ffcc" }}>
+              {String(value).padStart(2, "0")}
+            </span>
+            <span className="text-[0.55rem] tracking-widest uppercase mt-1" style={{ color: "#8892a4" }}>
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+// --- END OVERLAY SECTION ---
 
 type Props = {
   message: string;
@@ -28,33 +108,12 @@ const clues = [
   { id: "clue4", title: "Clue 4", subtitle: "Decrypt Key" },
 ];
 
-// ── NEW OVERLAY COMPONENT (Added) ──────────────────────
-const LockedOverlay = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    style={{
-      position: "fixed", inset: 0, zIndex: 999, display: "flex", 
-      alignItems: "center", justifyContent: "center", background: "#050709",
-      flexDirection: "column", gap: "20px"
-    }}
-  >
-    <div style={{ padding: "40px", border: "1px solid rgba(0,255,204,0.2)", borderRadius: "12px", textAlign: "center", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }}>
-      <h2 style={{ fontFamily: "'Syne', sans-serif", color: "#00ffcc", fontSize: "2rem", marginBottom: "10px" }}>ACCESS RESTRICTED</h2>
-      <p style={{ fontFamily: "'Share Tech Mono', monospace", color: "#8892a4" }}>SYSTEM UNLOCKS ON: <span style={{ color: "#ff4466" }}>05 APRIL 2026</span></p>
-    </div>
-  </motion.div>
-);
-
-// ── Login Screen ─────────────
 const LoginScreen = ({
   handleLogin,
   handleChange,
   loading,
   message,
 }: Pick<Props, "handleLogin" | "handleChange" | "loading" | "message">) => {
-  
   const isError = message.toLowerCase().includes("wrong") || 
                   message.toLowerCase().includes("failed") || 
                   message.toLowerCase().includes("error") || 
@@ -126,28 +185,21 @@ const LoginScreen = ({
   );
 };
 
-// ── Main Phase3 UI ─────────────────────────────────────────────────────────────
 const Phase3UI = ({
   message, loading, isAllowed, checkingAuth, progress, answers,
   isEventComplete, handleChange, handleLogin, handleAnswerChange, handleSubmit,
 }: Props) => {
   const [activeClue, setActiveClue] = useState<string | null>(null);
 
-  // --- OVERLAY LOGIC (Added) ---
-  const [showOverlay, setShowOverlay] = useState(true);
-  useEffect(() => {
-    const target = new Date("2026-04-05T00:00:00");
-    const check = () => { if (new Date() >= target) setShowOverlay(false); };
-    check();
-    const i = setInterval(check, 1000);
-    return () => clearInterval(i);
-  }, []);
-  // ----------------------------
-
   if (checkingAuth) return null;
 
   if (!isAllowed) {
-    return <LoginScreen handleLogin={handleLogin} handleChange={handleChange} loading={loading} message={message} />;
+    return (
+      <>
+        <ComingSoonOverlay />
+        <LoginScreen handleLogin={handleLogin} handleChange={handleChange} loading={loading} message={message} />
+      </>
+    );
   }
 
   const handleHexClick = (clueId: string) => {
@@ -162,22 +214,17 @@ const Phase3UI = ({
       className="h-screen w-screen text-[#e8eaf0] font-dm relative overflow-hidden flex flex-col"
       style={{ background: "radial-gradient(ellipse at 50% 40%, #06110d 0%, #050709 65%)" }}
     >
-      {/* ── OVERLAY TRIGGER (Added) ── */}
-      <AnimatePresence>
-        {showOverlay && <LockedOverlay key="lock" />}
-      </AnimatePresence>
+      <ComingSoonOverlay />
 
-      {/* ── Ambient Glows ── */}
       <div className="absolute top-[-150px] left-[-150px] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(0,255,204,0.05)_0%,transparent_70%)]" />
       <div className="absolute bottom-[-150px] right-[-150px] w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(167,139,250,0.04)_0%,transparent_70%)]" />
 
-      {/* ── Top Navigation Bar ── */}
       <div
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "14px 32px", background: "rgba(5,7,9,0.82)", backdropFilter: "blur(14px)",
           borderBottom: "1px solid rgba(0,255,204,0.1)", position: "relative", zIndex: 50,
-          flexShrink: 0 // Prevents the nav bar from shrinking
+          flexShrink: 0 
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -190,7 +237,6 @@ const Phase3UI = ({
         </div>
       </div>
 
-      {/* ── Floating HUD Message Pill ── */}
       <AnimatePresence>
         {message && !isEventComplete && (
           <motion.div
@@ -211,10 +257,7 @@ const Phase3UI = ({
         )}
       </AnimatePresence>
 
-      {/* ── CENTERED LAYOUT (Locked to single screen) ── */}
       <div className="relative w-full max-w-[900px] mx-auto flex flex-col items-center justify-center gap-6 px-6 z-10 flex-1 h-full">
-        
-        {/* TOP: Centered Hero Text */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -232,7 +275,6 @@ const Phase3UI = ({
           </p>
         </motion.div>
 
-        {/* MIDDLE: Hexagons perfectly aligned in a single horizontal row */}
         <motion.div
           initial="hidden" animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.1 } }, hidden: {} }}
@@ -252,7 +294,6 @@ const Phase3UI = ({
           ))}
         </motion.div>
 
-        {/* BOTTOM: The Terminal Panel (Space strictly reserved so layout doesn't jump) */}
         <div className="w-full h-[240px] flex justify-center items-start mt-2">
           <CluePanel
             activeClue={activeClue}
@@ -262,7 +303,6 @@ const Phase3UI = ({
             onSubmit={() => activeClue && handleSubmit(activeClue)}
           />
         </div>
-
       </div>
 
       <AnimatePresence>
