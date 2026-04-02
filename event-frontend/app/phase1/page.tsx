@@ -132,11 +132,12 @@ if (phase === 1) {
     });
   };
 
-  const handleSubmit = async (clueId: string) => {
+  const handleSubmit = async (clueId: string, submittedAnswer?: string) => {
     try {
+      // Prioritize the directly submitted answer string from the card
       const payload = {
         clueId: clueId,
-        answer: answers[clueId] || ""
+        answer: submittedAnswer !== undefined ? submittedAnswer : (answers[clueId] || "")
       };
 
       const res = await API.post("/phase/phase1/answer", payload);
@@ -153,7 +154,7 @@ if (phase === 1) {
 
       setAnswers((prev:any) => ({
         ...prev,
-        [clueId]: answers[clueId]
+        [clueId]: payload.answer
       }));
 
     } catch (err:any) {
