@@ -9,7 +9,7 @@ export default function Hero({ onRegister, onLogin }: HeroProps) {
 
       {/* Title */}
       <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-wide animate-slideUp drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-        Multi-Phase Puzzle Event
+        THE SPIRAL
       </h1>
 
       {/* Subtitle */}
