@@ -5,18 +5,20 @@ const routes: Record<string, string> = {
   "fire-777": "/phase3",
 };
 
-export default function Page({ params }: { params: { slug: string } }) {
-  const slug = params?.slug?.toLowerCase();
-  let target = null;
+// 1. Make the function async
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  
+  // 2. Await the params to get the slug
+  const { slug } = await params;
+  const lowerSlug = slug?.toLowerCase();
 
-  try {
-    if (!slug) return <h1>Invalid request</h1>;
-    target = routes[slug];
-  } catch (error) {
-    return <h1>Something went wrong</h1>;
+  if (!lowerSlug) {
+    return <h1>Invalid request</h1>;
   }
 
-  // Perform redirect OUTSIDE of the try/catch block
+  const target = routes[lowerSlug];
+
+  // 3. Keep redirect OUTSIDE of try/catch
   if (target) {
     redirect(target);
   }
