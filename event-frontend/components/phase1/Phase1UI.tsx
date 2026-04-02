@@ -8,7 +8,7 @@ import ClueCard from "./ClueCard";
 type Clue = {
   id: string;
   question: string;
-  imageUrl?: string;
+  imageUrl?: string; // Added to match the new ClueCard props
 };
 
 type Props = {
@@ -139,7 +139,7 @@ export default function Phase1UI({
                   message.toLowerCase().includes("incorrect");
 
   return (
-    <div className="relative min-h-screen bg-[#050709] text-[#e8eaf0] font-dm selection:bg-neon-teal/30 overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#050709] text-[#e8eaf0] font-dm selection:bg-neon-teal/30">
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none block" />
 
       {/* Ambient Glow Blobs */}
@@ -231,7 +231,7 @@ export default function Phase1UI({
                 position: "fixed",
                 top: "85px",
                 left: "50%",
-                zIndex: 100,
+                zIndex: 110, // Increased z-index to stay above Zoom overlay
                 padding: "10px 24px",
                 borderRadius: "30px",
                 background: isError ? "rgba(255, 68, 102, 0.1)" : "rgba(0, 255, 136, 0.1)",
