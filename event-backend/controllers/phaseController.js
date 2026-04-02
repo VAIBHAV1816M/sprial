@@ -7,7 +7,7 @@ const phase1Answers = {
   clue1: "answer1",
   clue2: "answer2",
   clue3: "answer3",
-  clue4: "be",
+  4: "be",
   clue5: "answer5"
 };
 
