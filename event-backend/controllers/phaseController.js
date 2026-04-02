@@ -83,9 +83,13 @@ const submitPhase1Answer = async (req, res) => {
     }
 
     // UPDATED: Added .trim() to handle accidental spaces
-    if (answer.trim().toLowerCase() !== correctAnswer.toLowerCase()) {
-      return res.status(400).json({ message: "Wrong answer" });
-    }
+    // Ensure both the user input AND the hardcoded answer are clean
+const sanitizedInput = answer.trim().toLowerCase();
+const sanitizedCorrect = correctAnswer.trim().toLowerCase();
+
+if (sanitizedInput !== sanitizedCorrect) {
+  return res.status(400).json({ message: "Wrong answer" });
+}
 
     user.cluesSolvedPhase1[clueId] = true;
     user.cluesAnswersPhase1[clueId] = answer.trim();
