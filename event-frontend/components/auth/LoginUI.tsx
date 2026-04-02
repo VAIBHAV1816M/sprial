@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react"; // Added this import
 
 type LoginUIProps = {
   form: { email: string; password: string };
@@ -11,6 +12,8 @@ type LoginUIProps = {
 };
 
 export default function LoginUI({ form, onChange, onSubmit, loading, message }: LoginUIProps) {
+  const [showPassword, setShowPassword] = useState(false); // Added visibility state
+
   return (
     <div
       className="flex justify-center items-center min-h-screen relative overflow-hidden text-[#e8eaf0] font-dm"
@@ -68,23 +71,35 @@ export default function LoginUI({ form, onChange, onSubmit, loading, message }: 
               <label className="text-[0.6rem] tracking-[0.1em] uppercase" style={{ color: "#8892a4" }}>
                 {field.label}
               </label>
-              <input
-                name={field.name}
-                type={field.type}
-                placeholder={field.placeholder}
-                value={form[field.name as keyof typeof form]}
-                onChange={onChange}
-                required
-                className="rounded-lg px-4 py-3 text-sm font-mono outline-none transition-all"
-                style={{
-                  background: "#0c0f14",
-                  border: "1px solid rgba(0,255,204,0.18)",
-                  color: "#e8eaf0",
-                  caretColor: "#00ffcc",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "rgba(0,255,204,0.45)")}
-                onBlur={(e)  => (e.target.style.borderColor = "rgba(0,255,204,0.18)")}
-              />
+              <div className="relative flex items-center"> {/* Wrapped input for positioning */}
+                <input
+                  name={field.name}
+                  type={field.name === "password" ? (showPassword ? "text" : "password") : field.type}
+                  placeholder={field.placeholder}
+                  value={form[field.name as keyof typeof form]}
+                  onChange={onChange}
+                  required
+                  className="w-full rounded-lg px-4 py-3 text-sm font-mono outline-none transition-all"
+                  style={{
+                    background: "#0c0f14",
+                    border: "1px solid rgba(0,255,204,0.18)",
+                    color: "#e8eaf0",
+                    caretColor: "#00ffcc",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "rgba(0,255,204,0.45)")}
+                  onBlur={(e)  => (e.target.style.borderColor = "rgba(0,255,204,0.18)")}
+                />
+                {field.name === "password" && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 text-[0.6rem] tracking-[0.1em] uppercase hover:text-[#00ffcc] transition-colors"
+                    style={{ color: "#8892a4" }}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                )}
+              </div>
             </motion.div>
           ))}
 
