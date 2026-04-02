@@ -16,13 +16,10 @@ const phase1Answers = {
 const phase2Answers = {
   c11: "main1",
   c1: "sub1",
-
   c22: "main2",
   c2: "sub2",
-
   c33: "main3",
   c3: "sub3",
-
   c44: "main4",
   c4: "sub4"
 };
@@ -49,7 +46,7 @@ const getPhase1Clues = async (req, res) => {
 
     res.json({
       cluesSolved: user.cluesSolvedPhase1,
-      cluesAnswers: user.cluesAnswersPhase1   // ⭐ ADDED
+      cluesAnswers: user.cluesAnswersPhase1
     });
 
   } catch (error) {
@@ -85,12 +82,17 @@ const submitPhase1Answer = async (req, res) => {
       return res.status(400).json({ message: "Invalid clue" });
     }
 
-    if (answer.toLowerCase() !== correctAnswer.toLowerCase()) {
+    // UPDATED: Added .trim() to handle accidental spaces
+    if (answer.trim().toLowerCase() !== correctAnswer.toLowerCase()) {
       return res.status(400).json({ message: "Wrong answer" });
     }
 
     user.cluesSolvedPhase1[clueId] = true;
-    user.cluesAnswersPhase1[clueId] = answer;   // ⭐ ADDED
+    user.cluesAnswersPhase1[clueId] = answer.trim();
+
+    // UPDATED: Added markModified to ensure Mongoose saves nested changes
+    user.markModified('cluesSolvedPhase1');
+    user.markModified('cluesAnswersPhase1');
 
     const p = user.cluesSolvedPhase1;
 
@@ -134,7 +136,7 @@ const getPhase2Clues = async (req, res) => {
 
     res.json({
       cluesSolved: user.cluesSolvedPhase2,
-      cluesAnswers: user.cluesAnswersPhase2   // ⭐ ADDED
+      cluesAnswers: user.cluesAnswersPhase2
     });
 
   } catch (error) {
@@ -182,12 +184,17 @@ const submitPhase2Answer = async (req, res) => {
       return res.status(400).json({ message: "Invalid clue" });
     }
 
-    if (answer.toLowerCase() !== correctAnswer.toLowerCase()) {
+    // UPDATED: Added .trim()
+    if (answer.trim().toLowerCase() !== correctAnswer.toLowerCase()) {
       return res.status(400).json({ message: "Wrong answer" });
     }
 
     user.cluesSolvedPhase2[clueId] = true;
-    user.cluesAnswersPhase2[clueId] = answer;   // ⭐ ADDED
+    user.cluesAnswersPhase2[clueId] = answer.trim();
+
+    // UPDATED: Added markModified
+    user.markModified('cluesSolvedPhase2');
+    user.markModified('cluesAnswersPhase2');
 
     const p = user.cluesSolvedPhase2;
 
@@ -237,7 +244,7 @@ const getPhase3Clues = async (req, res) => {
 
     res.json({
       cluesSolved: user.cluesSolvedPhase3,
-      cluesAnswers: user.cluesAnswersPhase3   // ⭐ ADDED
+      cluesAnswers: user.cluesAnswersPhase3
     });
 
   } catch (error) {
@@ -273,12 +280,17 @@ const submitPhase3Answer = async (req, res) => {
       return res.status(400).json({ message: "Invalid clue" });
     }
 
-    if (answer.toLowerCase() !== correctAnswer.toLowerCase()) {
+    // UPDATED: Added .trim()
+    if (answer.trim().toLowerCase() !== correctAnswer.toLowerCase()) {
       return res.status(400).json({ message: "Wrong answer" });
     }
 
     user.cluesSolvedPhase3[clueId] = true;
-    user.cluesAnswersPhase3[clueId] = answer;   // ⭐ ADDED
+    user.cluesAnswersPhase3[clueId] = answer.trim();
+
+    // UPDATED: Added markModified
+    user.markModified('cluesSolvedPhase3');
+    user.markModified('cluesAnswersPhase3');
 
     const p = user.cluesSolvedPhase3;
 
