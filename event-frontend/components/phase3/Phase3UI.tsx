@@ -8,7 +8,7 @@ import CompletionScreen from "./CompletionScreen";
 import ParticleBackground from "./ParticleBackground";
 
 // --- OVERLAY SECTION (April 5th) ---
-const UNLOCK_TIME = new Date("2026-03-05T00:00:00+05:30");
+const UNLOCK_TIME = new Date("2026-04-03T00:00:00+05:30");
 
 function ComingSoonOverlay() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
