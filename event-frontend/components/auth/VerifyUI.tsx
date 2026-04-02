@@ -122,8 +122,10 @@ export default function VerifyUI({
               <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#00ffcc", fontSize: "1.5rem" }}>
                 Congratulations!
               </h2>
+              
+              {/* This is the only line changed to support your dynamic phase names */}
               <p className="text-[0.9rem]" style={{ color: "#8892a4", lineHeight: 1.6 }}>
-                You have successfully completed this stage of the event.
+                {message}
               </p>
 
             </motion.div>
