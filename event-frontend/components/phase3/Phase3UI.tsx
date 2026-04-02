@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Added useEffect for the timer
 import { motion, AnimatePresence } from "framer-motion";
 import ClueHex from "./ClueHex";
 import CluePanel from "./CluePanel";
@@ -27,6 +27,25 @@ const clues = [
   { id: "clue3", title: "Clue 3", subtitle: "Unlock" },
   { id: "clue4", title: "Clue 4", subtitle: "Decrypt Key" },
 ];
+
+// ── NEW OVERLAY COMPONENT (Added) ──────────────────────
+const LockedOverlay = () => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    style={{
+      position: "fixed", inset: 0, zIndex: 999, display: "flex", 
+      alignItems: "center", justifyContent: "center", background: "#050709",
+      flexDirection: "column", gap: "20px"
+    }}
+  >
+    <div style={{ padding: "40px", border: "1px solid rgba(0,255,204,0.2)", borderRadius: "12px", textAlign: "center", background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }}>
+      <h2 style={{ fontFamily: "'Syne', sans-serif", color: "#00ffcc", fontSize: "2rem", marginBottom: "10px" }}>ACCESS RESTRICTED</h2>
+      <p style={{ fontFamily: "'Share Tech Mono', monospace", color: "#8892a4" }}>SYSTEM UNLOCKS ON: <span style={{ color: "#ff4466" }}>05 APRIL 2026</span></p>
+    </div>
+  </motion.div>
+);
 
 // ── Login Screen ─────────────
 const LoginScreen = ({
@@ -114,6 +133,17 @@ const Phase3UI = ({
 }: Props) => {
   const [activeClue, setActiveClue] = useState<string | null>(null);
 
+  // --- OVERLAY LOGIC (Added) ---
+  const [showOverlay, setShowOverlay] = useState(true);
+  useEffect(() => {
+    const target = new Date("2026-04-05T00:00:00");
+    const check = () => { if (new Date() >= target) setShowOverlay(false); };
+    check();
+    const i = setInterval(check, 1000);
+    return () => clearInterval(i);
+  }, []);
+  // ----------------------------
+
   if (checkingAuth) return null;
 
   if (!isAllowed) {
@@ -132,6 +162,11 @@ const Phase3UI = ({
       className="h-screen w-screen text-[#e8eaf0] font-dm relative overflow-hidden flex flex-col"
       style={{ background: "radial-gradient(ellipse at 50% 40%, #06110d 0%, #050709 65%)" }}
     >
+      {/* ── OVERLAY TRIGGER (Added) ── */}
+      <AnimatePresence>
+        {showOverlay && <LockedOverlay key="lock" />}
+      </AnimatePresence>
+
       {/* ── Ambient Glows ── */}
       <div className="absolute top-[-150px] left-[-150px] w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(0,255,204,0.05)_0%,transparent_70%)]" />
       <div className="absolute bottom-[-150px] right-[-150px] w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(167,139,250,0.04)_0%,transparent_70%)]" />
