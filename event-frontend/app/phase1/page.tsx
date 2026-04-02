@@ -21,16 +21,21 @@ export default function Phase1() {
   const [answers, setAnswers] = useState<any>({});
   const [wrongSignal, setWrongSignal] = useState<Record<string, number>>({});
 
+  // ✅ UPDATED: Added imageUrl to Clue 4 while keeping IDs consistent with your logic
   const clues = [
-    { id: "clue1", question: "Clue 1 question here" },
-    { id: "clue2", question: "Clue 2 question here" },
-    { id: "clue3", question: "Clue 3 question here" },
-    { id: "clue4", question: "Clue 4 question here" },
-    { id: "clue5", question: "Clue 5 question here" }
+    { id: "clue1", question: "Enter the first decrypted sequence found in the terminal logs." },
+    { id: "clue2", question: "Identify the protocol used to bypass the initial firewall layer." },
+    { id: "clue3", question: "What is the secondary access key hidden within the source code?" },
+    { 
+      id: "clue4", 
+      question: "Analyze this visual data fragment. The passcode is hidden within the noise pattern.", 
+      imageUrl: "/images/clue4_visual.png" 
+    },
+    { id: "clue5", question: "Final validation: Enter the master override string to complete Phase 1." }
   ];
 
   // ✅ UPDATED LOGIC (controlled access)
- useEffect(() => {
+  useEffect(() => {
 
   const token = getToken();
   const entry = localStorage.getItem("entry"); // 🔥 same as phase3
