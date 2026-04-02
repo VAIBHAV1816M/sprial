@@ -69,6 +69,7 @@ export default function Phase1UI({
   const mouseRef = useRef({ x: -999, y: -999 });
   const orbsRef = useRef<Orb[]>([]);
   const rafRef = useRef<number>(0);
+  const [showNote, setShowNote] = useState(false); // Added state for the note toggle
 
   useEffect(() => {
     orbsRef.current = Array.from({ length: 60 }, () => ({
@@ -173,8 +174,41 @@ export default function Phase1UI({
           <span className="text-[#8892a4] text-[0.8rem]">/</span>
           <span className="text-[0.88rem] text-[#8892a4]">Clues & Answers</span>
           <span className="ml-2 text-[0.75rem] text-[#8892a4]">{solvedCount}/{clues.length} solved</span>
-          <span className="ml-auto text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
+          
+          {/* Modified section for button under LIVE */}
+          <div className="ml-auto flex flex-col items-end gap-1">
+            <span className="text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
+            <button 
+              onClick={() => setShowNote(!showNote)}
+              className="text-[0.55rem] tracking-[0.1em] uppercase border border-[#00ffcc]/20 px-2 py-0.5 rounded hover:bg-[#00ffcc]/10 transition-colors"
+              style={{ color: "#8892a4" }}
+            >
+              {showNote ? "Close Note" : "Mission Note"}
+            </button>
+          </div>
         </nav>
+
+        {/* ── Mission Note Section ── */}
+        <AnimatePresence>
+          {showNote && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              className="fixed top-[85px] right-10 z-[90] w-[300px] p-5 rounded-xl border border-[#00ffcc]/20 backdrop-blur-xl bg-[#07090d]/90"
+              style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,255,204,0.05)" }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 bg-[#00ffcc] rounded-full animate-pulse" />
+                <span className="text-[0.65rem] font-bold tracking-[0.2em] uppercase text-[#00ffcc]">System Briefing</span>
+              </div>
+              <p className="text-[0.75rem] leading-relaxed text-[#8892a4] font-mono">
+                Note down all the clues carefully. These fragments are required to be <span className="text-[#e8eaf0]">encrypted</span>. 
+                Your final objective is to form a specific <span className="text-[#00ffcc]">page name</span> from these decoded strings to progress.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Floating HUD Message Pill ── */}
         <AnimatePresence>
