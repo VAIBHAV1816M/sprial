@@ -11,7 +11,7 @@ type Props = {
   answer: string;
   wrongSignal: number;
   onAnswerChange: (val: string) => void;
-  onSubmit: () => void;
+  onSubmit: (val: string) => void; // Updated to accept string
   delay?: number;
 };
 
@@ -98,7 +98,7 @@ export default function ClueCard({
     const now = Date.now();
     if (now - lastSubmitRef.current < 500) return;
     lastSubmitRef.current = now;
-    onSubmit();
+    onSubmit(answer); // Pass the local 'answer' directly
   };
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
