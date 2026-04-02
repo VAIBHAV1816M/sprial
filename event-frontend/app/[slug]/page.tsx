@@ -1,22 +1,16 @@
 import { redirect } from "next/navigation";
 
-type Props = {
-  params?: {
-    slug?: string;
-  };
-};
-
 const routes: Record<string, string> = {
   "shadow-x": "/phase2",
   "fire-777": "/phase3",
 };
 
-export default function SlugPage({ params }: Props) {
-  const slug = params?.slug?.toLowerCase();
-
-  if (!slug) {
-    return <h1>Loading...</h1>;
-  }
+export default function SlugPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const slug = params.slug.toLowerCase();
 
   const target = routes[slug];
 
@@ -24,5 +18,10 @@ export default function SlugPage({ params }: Props) {
     redirect(target);
   }
 
-  return <h1>❌ Invalid name</h1>;
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>❌ Invalid name</h1>
+      <p>Clue is incorrect</p>
+    </div>
+  );
 }
