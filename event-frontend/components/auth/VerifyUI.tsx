@@ -1,26 +1,45 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 type VerifyUIProps = {
   onVerify: () => Promise<boolean>;
   loading: boolean;
   message: string;
+  nextPath: string; // Received from app/verify/page.tsx
 };
 
 export default function VerifyUI({
   onVerify,
   loading,
   message,
+  nextPath,
 }: VerifyUIProps) {
-  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 
-  const handleClick = async () => {
-    const success = await onVerify();
-    if (success) {
-      setShowModal(true);
-    }
+  // Helper function to render text and make the specific names clickable
+  const renderInteractiveMessage = (text: string) => {
+    const names = ["shadow-x", "fire-777"];
+    const foundName = names.find((name) => text.includes(name));
+
+    if (!foundName) return text;
+
+    const parts = text.split(foundName);
+
+    return (
+      <>
+        {parts[0]}
+        <span
+          onClick={() => router.push(nextPath)}
+          className="cursor-pointer font-extrabold underline transition-all hover:opacity-80"
+          style={{ color: "#00ffcc", textDecorationColor: "rgba(0,255,204,0.4)" }}
+        >
+          {foundName}
+        </span>
+        {parts[1]}
+      </>
+    );
   };
 
   return (
@@ -37,7 +56,7 @@ export default function VerifyUI({
         style={{
           background: "rgba(7, 9, 13, 0.85)",
           backdropFilter: "blur(12px)",
-          border: "1px solid rgba(167,139,250,0.15)", // Purple accent for Verify step
+          border: "1px solid rgba(167,139,250,0.15)",
           boxShadow: "0 0 80px rgba(167,139,250,0.04), 0 24px 48px rgba(0,0,0,0.6)",
         }}
       >
@@ -70,7 +89,7 @@ export default function VerifyUI({
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleClick}
+            onClick={onVerify}
             disabled={loading}
             className="py-3 rounded-lg text-xs tracking-[0.12em] uppercase font-bold w-full transition-all"
             style={{
@@ -85,53 +104,19 @@ export default function VerifyUI({
             {loading ? "Establishing Link..." : "Initiate Verification"}
           </motion.button>
 
-          {/* Message Status */}
+          {/* Simple Success Message (Clickable Phase Name) */}
           {message && (
-            <p className="text-center text-[0.7rem] mt-2 tracking-wide uppercase" style={{ color: "#a78bfa", fontFamily: "'Share Tech Mono', monospace" }}>
-              [ {message} ]
-            </p>
+            <motion.p 
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-[0.8rem] mt-2 leading-relaxed" 
+              style={{ color: "#e8eaf0", fontFamily: "'Share Tech Mono', monospace" }}
+            >
+              [ {renderInteractiveMessage(message)} ]
+            </motion.p>
           )}
         </motion.div>
       </motion.div>
-
-      {/* ── Success Modal Overlay ── */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="relative w-full max-w-[380px] rounded-2xl p-8 flex flex-col items-center text-center gap-4"
-              style={{
-                background: "rgba(7, 9, 13, 0.95)",
-                border: "1px solid rgba(0,255,204,0.3)", // Cyan/Green for success
-                boxShadow: "0 0 40px rgba(0,255,204,0.15)",
-              }}
-            >
-              {/* Success Icon */}
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2" style={{ background: "rgba(0,255,204,0.1)", border: "1px solid rgba(0,255,204,0.4)" }}>
-                <span className="text-2xl text-[#00ffcc]">✓</span>
-              </div>
-
-              <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#00ffcc", fontSize: "1.5rem" }}>
-                Congratulations!
-              </h2>
-              
-              {/* This is the only line changed to support your dynamic phase names */}
-              <p className="text-[0.9rem]" style={{ color: "#8892a4", lineHeight: 1.6 }}>
-                {message}
-              </p>
-
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
