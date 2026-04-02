@@ -5,14 +5,11 @@ import API from "../../services/api";
 import VerifyUI from "@/components/auth/VerifyUI";
 
 export default function Verify() {
-
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleVerify = async (): Promise<boolean> => {
-
     try {
-
       setLoading(true);
 
       const phase = localStorage.getItem("verifyPhase");
@@ -29,12 +26,18 @@ export default function Verify() {
         return false;
       }
 
-      setMessage(res.data.message);
-
       if (res.data.verified) {
+        // --- LOGIC FOR DYNAMIC NAMES ---
+        const nextName = phase === "1" ? "shadow-x" : "fire-777";
+        setMessage(`you have complete this phase now move to the next phase go to ${nextName} for another clues`);
+        // -------------------------------
+
         localStorage.removeItem("verifyPhase");
         setLoading(false);
         return true; // ✅ success
+      } else {
+        // If not verified, use the default message from the database
+        setMessage(res.data.message);
       }
 
     } catch (error: any) {
