@@ -7,7 +7,7 @@ import VerifyUI from "@/components/auth/VerifyUI";
 export default function Verify() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [nextPath, setNextPath] = useState(""); // Added to store the redirect URL
+  const [nextPath, setNextPath] = useState(""); 
 
   const handleVerify = async (): Promise<boolean> => {
     try {
@@ -26,10 +26,10 @@ export default function Verify() {
       }
 
       if (res.data.verified) {
-        // Set the name and the path for the redirect
         const name = phase === "1" ? "shadow-x" : "fire-777";
         const path = phase === "1" ? "/phase2" : "/phase3";
         
+        // We set these, but we also return true so the UI knows to look at them
         setNextPath(path);
         setMessage(`you have complete this phase now move to the next phase go to ${name} for another clues`);
         
@@ -37,11 +37,12 @@ export default function Verify() {
         setLoading(false);
         return true; 
       } else {
-        setMessage(res.data.message);
+        setMessage(res.data.message || "Verification failed");
       }
     } catch (error: any) {
-      setMessage(error.response?.data?.message || "Verification failed");
+      setMessage(error.response?.data?.message || "Connection error");
     }
+    
     setLoading(false);
     return false;
   };
@@ -51,7 +52,7 @@ export default function Verify() {
       onVerify={handleVerify}
       loading={loading}
       message={message}
-      nextPath={nextPath} // Pass the path to the UI
+      nextPath={nextPath} 
     />
   );
 }
