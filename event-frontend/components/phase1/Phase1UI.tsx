@@ -69,7 +69,7 @@ export default function Phase1UI({
   const mouseRef = useRef({ x: -999, y: -999 });
   const orbsRef = useRef<Orb[]>([]);
   const rafRef = useRef<number>(0);
-  const [showNote, setShowNote] = useState(false); // Added state for the note toggle
+  const [showNote, setShowNote] = useState(false);
 
   useEffect(() => {
     orbsRef.current = Array.from({ length: 60 }, () => ({
@@ -174,37 +174,46 @@ export default function Phase1UI({
           <span className="text-[#8892a4] text-[0.8rem]">/</span>
           <span className="text-[0.88rem] text-[#8892a4]">Clues & Answers</span>
           <span className="ml-2 text-[0.75rem] text-[#8892a4]">{solvedCount}/{clues.length} solved</span>
-          
-          {/* Modified section for button under LIVE */}
-          <div className="ml-auto flex flex-col items-end gap-1">
-            <span className="text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
-            <button 
-              onClick={() => setShowNote(!showNote)}
-              className="text-[0.55rem] tracking-[0.1em] uppercase border border-[#00ffcc]/20 px-2 py-0.5 rounded hover:bg-[#00ffcc]/10 transition-colors"
-              style={{ color: "#8892a4" }}
-            >
-              {showNote ? "Close Note" : "Mission Note"}
-            </button>
-          </div>
+          <span className="ml-auto text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
         </nav>
+
+        {/* ── Floating Glowing Mission Button ── */}
+        <div className="fixed top-[85px] right-10 z-[100]">
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(0,255,204,0.3)" }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowNote(!showNote)}
+            className="px-6 py-2 rounded-lg text-[0.7rem] font-bold tracking-[0.15em] uppercase transition-all border"
+            style={{
+              background: "rgba(0,255,204,0.05)",
+              borderColor: "rgba(0,255,204,0.3)",
+              color: "#00ffcc",
+              boxShadow: "0 0 15px rgba(0,255,204,0.1)",
+              backdropFilter: "blur(8px)"
+            }}
+          >
+            {showNote ? "Close Terminal" : "Mission Note"}
+          </motion.button>
+        </div>
 
         {/* ── Mission Note Section ── */}
         <AnimatePresence>
           {showNote && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              className="fixed top-[85px] right-10 z-[90] w-[300px] p-5 rounded-xl border border-[#00ffcc]/20 backdrop-blur-xl bg-[#07090d]/90"
-              style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,255,204,0.05)" }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="fixed top-[135px] right-10 z-[90] w-[320px] p-6 rounded-xl border border-[#00ffcc]/20 backdrop-blur-xl bg-[#07090d]/90"
+              style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(0,255,204,0.05)" }}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2 h-2 bg-[#00ffcc] rounded-full animate-pulse" />
-                <span className="text-[0.65rem] font-bold tracking-[0.2em] uppercase text-[#00ffcc]">System Briefing</span>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 bg-[#00ffcc] rounded-full animate-pulse shadow-[0_0_8px_#00ffcc]" />
+                <span className="text-[0.7rem] font-bold tracking-[0.2em] uppercase text-[#00ffcc]">System Briefing</span>
               </div>
-              <p className="text-[0.75rem] leading-relaxed text-[#8892a4] font-mono">
-                Note down all the clues carefully. These fragments are required to be <span className="text-[#e8eaf0]">encrypted</span>. 
-                Your final objective is to form a specific <span className="text-[#00ffcc]">page name</span> from these decoded strings to progress.
+              <p className="text-[0.8rem] leading-relaxed text-[#8892a4] font-mono">
+                Note down all the clues carefully. These fragments are required to be <span className="text-[#e8eaf0] font-bold">encrypted</span>. 
+                <br /><br />
+                User objective: Construct a specific <span className="text-[#00ffcc] underline decoration-[#00ffcc]/30 underline-offset-4">page name</span> from the decoded fragments to bypass next security layer.
               </p>
             </motion.div>
           )}
