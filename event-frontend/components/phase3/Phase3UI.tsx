@@ -8,7 +8,7 @@ import CompletionScreen from "./CompletionScreen";
 import ParticleBackground from "./ParticleBackground";
 
 // --- OVERLAY SECTION (April 5th) ---
-const UNLOCK_TIME = new Date("2026-04-03T00:00:00+05:30");
+const UNLOCK_TIME = new Date("2026-04-05T00:00:00+05:30");
 
 function ComingSoonOverlay() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -20,8 +20,8 @@ function ComingSoonOverlay() {
       const diff = UNLOCK_TIME.getTime() - Date.now();
       if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
       return {
-        days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / (1000 * 60)) % 60),
         seconds: Math.floor((diff / 1000) % 60),
       };
@@ -59,8 +59,8 @@ function ComingSoonOverlay() {
 
       <div className="flex gap-4">
         {[
-          { label: "Days",    value: timeLeft.days },
-          { label: "Hours",   value: timeLeft.hours },
+          { label: "Days", value: timeLeft.days },
+          { label: "Hours", value: timeLeft.hours },
           { label: "Minutes", value: timeLeft.minutes },
           { label: "Seconds", value: timeLeft.seconds },
         ].map(({ label, value }) => (
@@ -114,10 +114,10 @@ const LoginScreen = ({
   loading,
   message,
 }: Pick<Props, "handleLogin" | "handleChange" | "loading" | "message">) => {
-  const isError = message.toLowerCase().includes("wrong") || 
-                  message.toLowerCase().includes("failed") || 
-                  message.toLowerCase().includes("error") || 
-                  message.toLowerCase().includes("incorrect");
+  const isError = message.toLowerCase().includes("wrong") ||
+    message.toLowerCase().includes("failed") ||
+    message.toLowerCase().includes("error") ||
+    message.toLowerCase().includes("incorrect");
 
   return (
     <div
@@ -139,7 +139,7 @@ const LoginScreen = ({
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
           <span style={{
             fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase",
-            padding: "4px 12px", borderRadius: "99px", border: "1px solid rgba(0,229,255,0.18)", 
+            padding: "4px 12px", borderRadius: "99px", border: "1px solid rgba(0,229,255,0.18)",
             color: "rgba(0,229,255,0.6)", display: "flex", alignItems: "center", gap: "8px", width: "fit-content"
           }}>
             <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#00e5ff" }} className="animate-pulse" />
@@ -164,18 +164,18 @@ const LoginScreen = ({
             <motion.div key={field.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 + i * 0.07 }} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               <label style={{ fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8892a4", fontFamily: "'Share Tech Mono', monospace" }}>{field.label}</label>
               <input name={field.name} type={field.type} placeholder={field.placeholder} onChange={handleChange} required style={{
-                  background: "#0c0f14", border: "1px solid rgba(0,229,255,0.18)", borderRadius: "8px",
-                  padding: "12px 16px", fontSize: "0.85rem", color: "#e8eaf0", outline: "none",
-                  fontFamily: "'Share Tech Mono', monospace", caretColor: "#00e5ff", transition: "border-color 0.2s"
-                }}
+                background: "#0c0f14", border: "1px solid rgba(0,229,255,0.18)", borderRadius: "8px",
+                padding: "12px 16px", fontSize: "0.85rem", color: "#e8eaf0", outline: "none",
+                fontFamily: "'Share Tech Mono', monospace", caretColor: "#00e5ff", transition: "border-color 0.2s"
+              }}
                 onFocus={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.45)")}
-                onBlur={(e)  => (e.target.style.borderColor = "rgba(0,229,255,0.18)")}
+                onBlur={(e) => (e.target.style.borderColor = "rgba(0,229,255,0.18)")}
               />
             </motion.div>
           ))}
           <motion.button type="submit" disabled={loading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{
-              marginTop: "8px", background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.3)", borderRadius: "8px", padding: "12px", color: "#00e5ff", fontFamily: "'Orbitron', monospace", fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: "bold", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, transition: "background 0.2s"
-            }}>
+            marginTop: "8px", background: "rgba(0,229,255,0.08)", border: "1px solid rgba(0,229,255,0.3)", borderRadius: "8px", padding: "12px", color: "#00e5ff", fontFamily: "'Orbitron', monospace", fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: "bold", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, transition: "background 0.2s"
+          }}>
             {loading ? "Authenticating..." : "Authenticate"}
           </motion.button>
         </form>
@@ -224,7 +224,7 @@ const Phase3UI = ({
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "14px 32px", background: "rgba(5,7,9,0.82)", backdropFilter: "blur(14px)",
           borderBottom: "1px solid rgba(0,255,204,0.1)", position: "relative", zIndex: 50,
-          flexShrink: 0 
+          flexShrink: 0
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -258,9 +258,9 @@ const Phase3UI = ({
       </AnimatePresence>
 
       <div className="relative w-full max-w-[900px] mx-auto flex flex-col items-center justify-center gap-6 px-6 z-10 flex-1 h-full">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }} 
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
           className="w-full text-center flex flex-col items-center"
         >
           <div className="flex items-center justify-center gap-2 text-[0.68rem] text-[#8892a4] tracking-[0.14em] uppercase mb-2">
