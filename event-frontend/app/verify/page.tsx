@@ -31,7 +31,12 @@ export default function Verify() {
         
         // We set these, but we also return true so the UI knows to look at them
         setNextPath(path);
-        setMessage(`you have complete this phase now move to the next phase go to ${name} for another clues`);
+        
+        if (phase === "1") {
+          setMessage("Verification complete. Reconstruct the answers of phase1 into a meaningful sentence and visit spiral.online/(your answer)");
+        } else {
+          setMessage(`you have complete this phase now move to the next phase go to ${name} for another clues`);
+        }
         
         localStorage.removeItem("verifyPhase");
         setLoading(false);

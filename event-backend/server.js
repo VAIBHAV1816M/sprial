@@ -17,7 +17,8 @@ connectDB();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://sprial.vercel.app"
+    "https://spiral.vercel.app",   // ✅ fixed typo
+    "https://spiraldit.online"     // ✅ added custom domain
   ],
   credentials: true
 }));
