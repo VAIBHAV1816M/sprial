@@ -20,7 +20,7 @@ export default function VerifyUI({
 
   // Helper function to render text and make the specific names clickable
   const renderInteractiveMessage = (text: string) => {
-    const names = ["shadow-x", "fire-777"];
+    const names = ["startbeyondlogic", "fire-777"];
     const foundName = names.find((name) => text.includes(name));
 
     if (!foundName) return text;

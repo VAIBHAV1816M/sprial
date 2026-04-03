@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 const routes: Record<string, string> = {
-  "shadow-x": "/phase2",
+  "startbeyondlogic": "/phase2",
   "fire-777": "/phase3",
 };
 

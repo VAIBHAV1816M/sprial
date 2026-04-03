@@ -26,7 +26,7 @@ export default function Verify() {
       }
 
       if (res.data.verified) {
-        const name = phase === "1" ? "shadow-x" : "fire-777";
+        const name = phase === "1" ? "startbeyondlogic" : "fire-777";
         const path = phase === "1" ? "/phase2" : "/phase3";
 
         // We set these, but we also return true so the UI knows to look at them
