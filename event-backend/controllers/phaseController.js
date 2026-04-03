@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const phase1Answers = {
   clue1: "answer1",
   clue2: "answer2",
-  clue3: "answer3",
+  clue3: "start",
   clue4: "be",
   clue5: "answer5"
 };
