@@ -54,7 +54,7 @@ function ComingSoonOverlay() {
         Phase 3 Coming Soon
       </h1>
       <p className="text-sm mb-12" style={{ color: "#8892a4" }}>
-        Unlocks on April 5th at 8:00 AM IST
+        Unlocks on April 5th
       </p>
 
       <div className="flex gap-4">
