@@ -17,9 +17,10 @@ connectDB();
 const corsOptions = {
   origin: [
     //"http://localhost:3000",
-    //"https://spiral.vercel.app",
+    "https://spiral.vercel.app",
     "https://spiraldit.online",
     "https://www.spiraldit.online",
+    "https://sprial.onrender.com",
   ],
   credentials: true
 };
