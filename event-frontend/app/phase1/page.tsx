@@ -25,7 +25,11 @@ export default function Phase1() {
   const clues = [
     { id: "clue1", question: "Enter the first decrypted sequence found in the terminal logs." },
     { id: "clue2", question: "Identify the protocol used to bypass the initial firewall layer." },
-    { id: "clue3", question: "What is the secondary access key hidden within the source code?" },
+    { id: "clue3", question: " Stillness hides the first move  
+Time begins before you notice  
+All journeys need a beginning  
+Reality shifts when you act  
+The path reveals itself slowly " },
     { 
       id: "clue4", 
       question: "“Stop staring at the whole… pick the right fragment.”", 
