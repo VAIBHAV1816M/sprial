@@ -17,7 +17,7 @@ type Props = {
   answers: Record<string, string>;
   wrongSignal: Record<string, number>;
   onAnswerChange: (clueId: string, value: string) => void;
-  onSubmit: (clueId: string) => void;
+  onSubmit: (clueId: string, val: string) => void; // UPDATED THIS LINE
   message: string;
 };
 
@@ -276,7 +276,7 @@ export default function Phase1UI({
                    answer={answers?.[left.id] ?? ""} 
                    wrongSignal={wrongSignal?.[left.id] ?? 0}
                    onAnswerChange={(v) => onAnswerChange(left.id, v)} 
-                   onSubmit={() => onSubmit(left.id)}
+                   onSubmit={(val) => onSubmit(left.id, val)} // UPDATED THIS LINE
                    isActive={!solved?.[left.id]}
                 />
               </div>
@@ -289,7 +289,8 @@ export default function Phase1UI({
                     answer={answers?.[left.id] ?? ""} 
                     wrongSignal={wrongSignal?.[left.id] ?? 0}
                     onAnswerChange={(v) => onAnswerChange(left.id, v)} 
-                    onSubmit={() => onSubmit(left.id)} delay={0}
+                    onSubmit={(val) => onSubmit(left.id, val)} // UPDATED THIS LINE
+                    delay={0}
                     isActive={!solved?.[left.id]}
                   />
                 </div>
@@ -300,7 +301,8 @@ export default function Phase1UI({
                     answer={answers?.[right.id] ?? ""} 
                     wrongSignal={wrongSignal?.[right.id] ?? 0}
                     onAnswerChange={(v) => onAnswerChange(right.id, v)} 
-                    onSubmit={() => onSubmit(right.id)} delay={180}
+                    onSubmit={(val) => onSubmit(right.id, val)} // UPDATED THIS LINE
+                    delay={180}
                     isActive={!solved?.[right.id]}
                   />
                 </div>
