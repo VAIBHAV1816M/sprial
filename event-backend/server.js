@@ -20,7 +20,6 @@ const corsOptions = {
     "https://spiral.vercel.app",
     "https://spiraldit.online",
     "https://www.spiraldit.online",
-    "https://sprial.onrender.com",
   ],
   credentials: true
 };
