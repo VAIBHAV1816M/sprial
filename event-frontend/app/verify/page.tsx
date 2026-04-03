@@ -7,7 +7,7 @@ import VerifyUI from "@/components/auth/VerifyUI";
 export default function Verify() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [nextPath, setNextPath] = useState(""); 
+  const [nextPath, setNextPath] = useState("");
 
   const handleVerify = async (): Promise<boolean> => {
     try {
@@ -28,26 +28,26 @@ export default function Verify() {
       if (res.data.verified) {
         const name = phase === "1" ? "shadow-x" : "fire-777";
         const path = phase === "1" ? "/phase2" : "/phase3";
-        
+
         // We set these, but we also return true so the UI knows to look at them
         setNextPath(path);
-        
+
         if (phase === "1") {
-          setMessage("Verification complete. Reconstruct the answers of phase1 into a meaningful sentence and visit spiral.online/(your answer)");
+          setMessage("Verification complete. Reconstruct the answers of phase1 into a meaningful sentence and visit spiraldit.online/(your answer)");
         } else {
           setMessage(`you have complete this phase now move to the next phase go to ${name} for another clues`);
         }
-        
+
         localStorage.removeItem("verifyPhase");
         setLoading(false);
-        return true; 
+        return true;
       } else {
         setMessage(res.data.message || "Verification failed");
       }
     } catch (error: any) {
       setMessage(error.response?.data?.message || "Connection error");
     }
-    
+
     setLoading(false);
     return false;
   };
@@ -57,7 +57,7 @@ export default function Verify() {
       onVerify={handleVerify}
       loading={loading}
       message={message}
-      nextPath={nextPath} 
+      nextPath={nextPath}
     />
   );
 }
