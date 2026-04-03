@@ -178,47 +178,7 @@ export default function Phase1UI({
           <span className="ml-auto text-[#00ffcc] text-[0.7rem] tracking-[0.12em] uppercase">● Live</span>
         </nav>
 
-        {/* ── Floating Glowing Mission Button ── */}
-        <div className="fixed top-[85px] right-10 z-[100]">
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(0,255,204,0.3)" }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowNote(!showNote)}
-            className="px-6 py-2 rounded-lg text-[0.7rem] font-bold tracking-[0.15em] uppercase transition-all border"
-            style={{
-              background: "rgba(0,255,204,0.05)",
-              borderColor: "rgba(0,255,204,0.3)",
-              color: "#00ffcc",
-              boxShadow: "0 0 15px rgba(0,255,204,0.1)",
-              backdropFilter: "blur(8px)"
-            }}
-          >
-            {showNote ? "Close Terminal" : "Mission Note"}
-          </motion.button>
-        </div>
 
-        {/* ── Mission Note Section ── */}
-        <AnimatePresence>
-          {showNote && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="fixed top-[135px] right-10 z-[90] w-[320px] p-6 rounded-xl border border-[#00ffcc]/20 backdrop-blur-xl bg-[#07090d]/90"
-              style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(0,255,204,0.05)" }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-2 h-2 bg-[#00ffcc] rounded-full animate-pulse shadow-[0_0_8px_#00ffcc]" />
-                <span className="text-[0.7rem] font-bold tracking-[0.2em] uppercase text-[#00ffcc]">System Briefing</span>
-              </div>
-              <p className="text-[0.8rem] leading-relaxed text-[#8892a4] font-mono">
-                Note down all the clues carefully. These fragments are required to be <span className="text-[#e8eaf0] font-bold">encrypted</span>. 
-                <br /><br />
-                User objective: Construct a specific <span className="text-[#00ffcc] underline decoration-[#00ffcc]/30 underline-offset-4">page name</span> from the decoded fragments to bypass next security layer.
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* ── Floating HUD Message Pill ── */}
         <AnimatePresence>
@@ -266,42 +226,42 @@ export default function Phase1UI({
         </header>
 
         {/* Staggered Card Grid */}
-        <div className="max-w-[1280px] mx-auto px-15 pb-[220px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-15 pb-[220px]">
           {rows.map(([left, right], idx) => {
             const isOddRow = idx % 2 === 0;
             if (!right) return (
-              <div key={left.id} className="flex justify-center mb-20 pt-10">
+              <div key={left.id} className="flex justify-center mb-8 md:mb-20 pt-8 md:pt-10">
                 <ClueCard 
                    clue={left} solved={!!solved?.[left.id]} 
                    answer={answers?.[left.id] ?? ""} 
                    wrongSignal={wrongSignal?.[left.id] ?? 0}
                    onAnswerChange={(v) => onAnswerChange(left.id, v)} 
-                   onSubmit={(val) => onSubmit(left.id, val)} // UPDATED THIS LINE
+                   onSubmit={(val) => onSubmit(left.id, val)}
                    isActive={!solved?.[left.id]}
                 />
               </div>
             );
             return (
-              <div key={left.id} className="grid grid-cols-1 md:grid-cols-[1fr_100px_1fr] mb-[100px] items-start">
+              <div key={left.id} className="grid grid-cols-1 md:grid-cols-[1fr_100px_1fr] mb-8 md:mb-[100px] items-start">
                 <div className={`flex justify-center md:justify-end md:pr-7 ${isOddRow ? "md:pb-[100px]" : ""}`}>
                   <ClueCard 
                     clue={left} solved={!!solved?.[left.id]} 
                     answer={answers?.[left.id] ?? ""} 
                     wrongSignal={wrongSignal?.[left.id] ?? 0}
                     onAnswerChange={(v) => onAnswerChange(left.id, v)} 
-                    onSubmit={(val) => onSubmit(left.id, val)} // UPDATED THIS LINE
+                    onSubmit={(val) => onSubmit(left.id, val)}
                     delay={0}
                     isActive={!solved?.[left.id]}
                   />
                 </div>
                 <div className="hidden md:block" />
-                <div className={`flex justify-center md:justify-start md:pl-7 ${isOddRow ? "md:pt-[140px]" : "md:pt-[140px]"}`}>
+                <div className={`flex justify-center md:justify-start md:pl-7 mt-8 md:mt-0 ${isOddRow ? "md:pt-[140px]" : "md:pt-[140px]"}`}>
                   <ClueCard 
                     clue={right} solved={!!solved?.[right.id]} 
                     answer={answers?.[right.id] ?? ""} 
                     wrongSignal={wrongSignal?.[right.id] ?? 0}
                     onAnswerChange={(v) => onAnswerChange(right.id, v)} 
-                    onSubmit={(val) => onSubmit(right.id, val)} // UPDATED THIS LINE
+                    onSubmit={(val) => onSubmit(right.id, val)}
                     delay={180}
                     isActive={!solved?.[right.id]}
                   />

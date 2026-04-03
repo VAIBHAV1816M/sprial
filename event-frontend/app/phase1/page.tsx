@@ -23,19 +23,16 @@ export default function Phase1() {
 
   // ✅ UPDATED: Added imageUrl to Clue 4 while keeping IDs consistent with your logic
   const clues = [
-    { id: "clue1", question: "Enter the first decrypted sequence found in the terminal logs." },
-    { id: "clue2", question: "Identify the protocol used to bypass the initial firewall layer." },
-    { id: "clue3", question: ` Stillness hides the first move\n
-Time begins before you notice\n  
-All journeys need a beginning\n  
-Reality shifts when you act\n  
-The path reveals itself slowly ` },
+    { id: "clue1", question: "you need to download the image", imageUrl: "/images/spiral.png", extraText: "There's more stored here than what's visible.", downloadUrl: "https://drive.google.com/file/d/1syrimsK-kparnUACWWhzkTVO6JwXu7yn/view" },
+    { id: "clue2", extraText: "Look again… but differently", question: "visit", downloadUrl: "https://clue2-spiral.vercel.app/", linkLabel: "Visit" },
+    { id: "clue3", question: `Stillness hides the first move\nTime begins before you notice\nAll journeys need a beginning\nReality shifts when you act\nThe path reveals itself slowly` },
     { 
       id: "clue4", 
       question: "“Stop staring at the whole… pick the right fragment.”", 
-      imageUrl: "/images/clue4_visual.png" 
+      imageUrl: "/images/clue4_visual.png",
+      downloadUrl: "https://drive.google.com/file/d/100bfbUvYrBusuvEU9mLNd2qIbhbWbfRR/view?usp=drive_link"
     },
-    { id: "clue5", question: "Final validation: Enter the master override string to complete Phase 1." }
+    { id: "clue5", heading: "Not what they are, But how they begin", question: `1. (75.8 ÷ 4) + 0.0057, (73 × 1) + (4091 ÷ 10000)\n\n2. "I'll give you fifty one point seven five two, you know why...\nbut don't forget minus one point two five seven seven."\n\n3. "Signal locked at 189218... then corrected to standard format."\n"Second reading was 728347 same adjustment applied."` },
   ];
 
   // ✅ UPDATED LOGIC (controlled access)

@@ -4,11 +4,11 @@ const crypto = require("crypto");
 /* ---------------- PHASE 1 ANSWERS ---------------- */
 
 const phase1Answers = {
-  clue1: "answer1",
-  clue2: "answer2",
+  clue1: "ic",
+  clue2: "yond",
   clue3: "start",
   clue4: "be",
-  clue5: "answer5"
+  clue5: "log"
 };
 
 /* ---------------- PHASE 2 ANSWERS ---------------- */
