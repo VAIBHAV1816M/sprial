@@ -8,17 +8,17 @@ import ParticleBackground from "./ParticleBackground";
 
 // ── Define Clues & Mappings ──
 const QUESTIONS: Record<string, string> = {
-  c11: "c11 question here",
-  c22: "c22 question here",
-  c33: "c33 question here",
-  c44: "c44 question here",
+  c11: "become known to more and more people the demands to do something about this outrageous man become louder and loud",
+  c22: "Smallest Unit , Patterned Action Not on paper—look in the cloud",
+  c33: "First births the second, Second mirrors the third, The rule never speaks — only repeats. Decode the pair, The next reveals the place.",
+  c44: "IMAGE:/c44.png",
   c1:  "c1 question here",
   c2:  "c2 question here",
   c3:  "c3 question here",
   c4:  "c4 question here",
 };
 
-const MAIN_IDS = ["c44", "c11", "c22", "c33"];
+const MAIN_IDS = ["c11", "c22", "c33", "c44"];
 const SUB_MAP:  Record<string, string> = { c44: "c4", c11: "c1", c22: "c2", c33: "c3" };
 
 interface Props {

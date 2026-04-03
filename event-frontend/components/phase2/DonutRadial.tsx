@@ -26,10 +26,10 @@ const OR = 130, OW = 45;
 const IR = 75, IW = 26;
 
 const SEGMENTS = [
-  { id: "c44", label: "C44", ms: [-80, -10] as [number,number], subId: "c4",  ss: [-74, -16] as [number,number] },
-  { id: "c11", label: "C11", ms: [10,   80] as [number,number], subId: "c1",  ss: [16,   74] as [number,number] },
-  { id: "c22", label: "C22", ms: [100, 170] as [number,number], subId: "c2",  ss: [106, 164] as [number,number] },
-  { id: "c33", label: "C33", ms: [190, 260] as [number,number], subId: "c3",  ss: [196, 254] as [number,number] },
+  { id: "c11", label: "C11", ms: [-80, -10] as [number,number], subId: "c1",  ss: [-74, -16] as [number,number] },
+  { id: "c22", label: "C22", ms: [10,   80] as [number,number], subId: "c2",  ss: [16,   74] as [number,number] },
+  { id: "c33", label: "C33", ms: [100, 170] as [number,number], subId: "c3",  ss: [106, 164] as [number,number] },
+  { id: "c44", label: "C44", ms: [190, 260] as [number,number], subId: "c4",  ss: [196, 254] as [number,number] },
 ];
 
 interface Props {

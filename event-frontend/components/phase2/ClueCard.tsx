@@ -1,31 +1,34 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
-  isOpen:    boolean;
-  isSub?:    boolean;
-  clueId:    string;
-  stageNum:  number;
-  question:  string;
-  answer:    string;
-  isSolved:  boolean;
-  onChange:  (e: any, clueId: string) => void;
-  onSubmit:  (clueId: string) => void;
-  onClose:   () => void;
+  isOpen: boolean;
+  isSub?: boolean;
+  clueId: string;
+  stageNum: number;
+  question: string;
+  answer: string;
+  isSolved: boolean;
+  onChange: (e: any, clueId: string) => void;
+  onSubmit: (clueId: string) => void;
+  onClose: () => void;
 }
 
 export default function ClueCard({
   isOpen, isSub = false, clueId, stageNum,
   question, answer, isSolved, onChange, onSubmit, onClose,
 }: Props) {
-  const accent  = isSub ? "#a78bfa" : "#00ffcc";
+  const [showPopup, setShowPopup] = useState(false);
+  const accent = isSub ? "#a78bfa" : "#00ffcc";
   const accentA = isSub ? "rgba(167,139,250," : "rgba(0,255,204,";
-  const bg      = isSub ? "#070610"           : "#07090d";
+  const bg = isSub ? "#070610" : "#07090d";
 
   return (
-    <AnimatePresence>
-      {isOpen && (
+    <>
+      <AnimatePresence>
+        {isOpen && (
         <motion.div
           key={clueId + (isSub ? "-sub" : "-main")}
           initial={{ width: 0, opacity: 0 }}
@@ -98,9 +101,20 @@ export default function ClueCard({
               <span style={{ fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8892a4" }}>
                 Clue
               </span>
-              <p style={{ fontSize: "0.95rem", color: "#e8eaf0", lineHeight: 1.65 }}>
-                {question}
-              </p>
+              {question.startsWith("IMAGE:") ? (
+                <img 
+                  src={question.replace("IMAGE:", "")} 
+                  alt="Clue" 
+                  onClick={() => setShowPopup(true)}
+                  style={{ width: "100%", borderRadius: 8, cursor: "pointer", border: `1px solid ${accentA}0.2)` }} 
+                />
+              ) : (
+                <p 
+                  onClick={() => setShowPopup(true)}
+                  style={{ fontSize: "0.95rem", color: "#e8eaf0", lineHeight: 1.65, cursor: "pointer", textDecoration: "underline", textDecorationColor: `${accentA}0.4)` }}>
+                  {question}
+                </p>
+              )}
             </div>
 
             {/* Input + Button */}
@@ -125,7 +139,7 @@ export default function ClueCard({
                   transition: "border-color 0.2s",
                 }}
                 onFocus={(e) => (e.target.style.borderColor = `${accentA}0.45)`)}
-                onBlur={(e)  => (e.target.style.borderColor = `${accentA}0.18)`)}
+                onBlur={(e) => (e.target.style.borderColor = `${accentA}0.18)`)}
               />
 
               <motion.button
@@ -152,6 +166,76 @@ export default function ClueCard({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            onClick={() => setShowPopup(false)}
+            style={{
+              position: "fixed",
+              top: 0, left: 0, right: 0, bottom: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: "rgba(0,0,0,0.7)",
+              zIndex: 9999,
+              backdropFilter: "blur(5px)",
+              padding: 24,
+            }}
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: bg,
+                border: `1px solid ${accentA}0.3)`,
+                borderRadius: 16,
+                padding: 40,
+                maxWidth: 600,
+                width: "100%",
+                boxShadow: `0 0 40px ${accentA}0.2)`,
+                display: "flex",
+                flexDirection: "column",
+                gap: 20
+              }}
+            >
+              <h3 style={{
+                fontFamily: "'Syne', sans-serif", fontSize: "1.5rem", color: accent, margin: 0
+              }}>
+                {clueId.toUpperCase()} Clue
+              </h3>
+              {question.startsWith("IMAGE:") ? (
+                <img 
+                  src={question.replace("IMAGE:", "")} 
+                  alt="Clue" 
+                  style={{ width: "100%", maxHeight: "60vh", objectFit: "contain", borderRadius: 8 }} 
+                />
+              ) : (
+                <p style={{ fontSize: "1.2rem", color: "#e8eaf0", lineHeight: 1.6, margin: 0 }}>
+                  {question}
+                </p>
+              )}
+              <button
+                onClick={() => setShowPopup(false)}
+                style={{
+                  marginTop: 20,
+                  padding: "10px 24px",
+                  borderRadius: 8,
+                  background: `${accentA}0.1)`,
+                  border: `1px solid ${accent}`,
+                  color: accent,
+                  cursor: "pointer",
+                  fontFamily: "'DM Sans', sans-serif",
+                  alignSelf: "flex-end"
+                }}
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

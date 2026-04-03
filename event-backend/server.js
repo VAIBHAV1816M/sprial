@@ -16,7 +16,6 @@ connectDB();
 // ✅ CORS CONFIG
 const corsOptions = {
   origin: [
-    "http://localhost:3000",
     "https://spiral.vercel.app",
     "https://spiraldit.online",
     "https://www.spiraldit.online",
@@ -25,7 +24,6 @@ const corsOptions = {
   credentials: true,
 };
 
-// apply CORS
 app.use(cors(corsOptions));
 
 // ❌ REMOVE this (causing crash)
