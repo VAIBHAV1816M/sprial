@@ -14,15 +14,19 @@ const app = express();
 connectDB();
 
 // ✅ FIXED CORS (IMPORTANT)
-app.use(cors({
+const corsOptions = {
   origin: [
     "http://localhost:3000",
     "https://spiral.vercel.app",
     "https://spiraldit.online"
   ],
   credentials: true
-}));
+};
 
+app.use(cors(corsOptions));
+
+// ✅ VERY IMPORTANT (handles preflight)
+app.options("*", cors(corsOptions));
 
 // middlewares
 app.use(express.json());
