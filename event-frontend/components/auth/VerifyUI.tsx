@@ -8,6 +8,7 @@ type VerifyUIProps = {
   loading: boolean;
   message: string;
   nextPath: string; // Received from app/verify/page.tsx
+  isSuccessModal?: boolean;
 };
 
 export default function VerifyUI({
@@ -15,6 +16,7 @@ export default function VerifyUI({
   loading,
   message,
   nextPath,
+  isSuccessModal,
 }: VerifyUIProps) {
   const router = useRouter();
 
@@ -105,7 +107,7 @@ export default function VerifyUI({
           </motion.button>
 
           {/* Simple Success Message (Clickable Phase Name) */}
-          {message && (
+          {message && !isSuccessModal && (
             <motion.p 
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -117,6 +119,27 @@ export default function VerifyUI({
           )}
         </motion.div>
       </motion.div>
+
+      {/* Success Modal */}
+      {message && isSuccessModal && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050709]/90 backdrop-blur-md"
+        >
+          <div 
+            className="bg-[#07090d] border rounded-2xl p-10 md:p-12 max-w-lg w-full text-center flex flex-col gap-6"
+            style={{ borderColor: "rgba(0,255,204,0.3)", boxShadow: "0 0 60px rgba(0,255,204,0.15)" }}
+          >
+            <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#00ffcc", fontSize: "2rem" }}>
+              Verification Successful
+            </h2>
+            <p style={{ color: "#e8eaf0", fontFamily: "'DM Sans', sans-serif", fontSize: "1.2rem", lineHeight: 1.8 }}>
+              {message}
+            </p>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }

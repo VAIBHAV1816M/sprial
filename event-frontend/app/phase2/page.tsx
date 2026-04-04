@@ -6,7 +6,7 @@ import API from "../../services/api";
 import { saveToken, getToken } from "../../utils/auth";
 import Phase2UI from "@/components/phase2/Phase2UI";
 
-const UNLOCK_TIME = new Date("2026-04-04T14:00:00+05:30");
+const UNLOCK_TIME = new Date("2026-04-04T00:00:00+05:30");
 
 function ComingSoonOverlay() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });

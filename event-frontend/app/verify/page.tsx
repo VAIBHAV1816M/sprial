@@ -8,6 +8,7 @@ export default function Verify() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [nextPath, setNextPath] = useState("");
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
 
   const handleVerify = async (): Promise<boolean> => {
     try {
@@ -35,7 +36,8 @@ export default function Verify() {
         if (phase === "1") {
           setMessage("Verification complete. Reconstruct the answers of phase1 into a meaningful sentence and visit spiraldit.online/(your answer)");
         } else {
-          setMessage(`you have complete this phase now move to the next phase go to ${name} for another clues`);
+          setMessage("Congrats! You have completed Phase 2. Now rearrange the inner clues' answers to identify the Instagram ID.");
+          setIsSuccessModal(true);
         }
 
         localStorage.removeItem("verifyPhase");
@@ -58,6 +60,7 @@ export default function Verify() {
       loading={loading}
       message={message}
       nextPath={nextPath}
+      isSuccessModal={isSuccessModal}
     />
   );
 }
