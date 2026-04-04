@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
@@ -21,6 +21,15 @@ export default function ClueCard({
   question, answer, isSolved, onChange, onSubmit, onClose,
 }: Props) {
   const [showPopup, setShowPopup] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const accent = isSub ? "#a78bfa" : "#00ffcc";
   const accentA = isSub ? "rgba(167,139,250," : "rgba(0,255,204,";
   const bg = isSub ? "#070610" : "#07090d";
@@ -31,25 +40,34 @@ export default function ClueCard({
         {isOpen && (
         <motion.div
           key={clueId + (isSub ? "-sub" : "-main")}
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: isSub ? 320 : 350, opacity: 1 }} // Increased outer widths
-          exit={{ width: 0, opacity: 0 }}
+          initial={isMobile ? { opacity: 0 } : { width: 0, opacity: 0 }}
+          animate={isMobile ? { opacity: 1 } : { width: isSub ? 320 : 350, opacity: 1 }}
+          exit={isMobile ? { opacity: 0 } : { width: 0, opacity: 0 }}
           transition={{ duration: 0.42, ease: [0.4, 0, 0.2, 1] }}
-          style={{ overflow: "hidden", flexShrink: 0 }}
+          style={isMobile ? {
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center",
+            background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)"
+          } : { overflow: "hidden", flexShrink: 0 }}
+          onClick={isMobile ? onClose : undefined}
         >
           <motion.div
-            initial={{ x: 24, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 24, opacity: 0 }}
+            initial={isMobile ? { y: 20, scale: 0.95, opacity: 0 } : { x: 24, opacity: 0 }}
+            animate={isMobile ? { y: 0, scale: 1, opacity: 1 } : { x: 0, opacity: 1 }}
+            exit={isMobile ? { y: 20, scale: 0.95, opacity: 0 } : { x: 24, opacity: 0 }}
             transition={{ duration: 0.35, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+            onClick={(e) => e.stopPropagation()}
             style={{
-              width: isSub ? 300 : 330, // Increased inner widths
-              minHeight: 420, // Increased height
+              width: isMobile ? "90%" : (isSub ? 300 : 330),
+              maxWidth: 400,
+              minHeight: isMobile ? "auto" : 420,
+              maxHeight: isMobile ? "90vh" : "none",
+              overflowY: isMobile ? "auto" : "visible",
               background: bg,
               border: `1px solid ${accentA}0.12)`,
               borderRadius: 16,
-              padding: "32px 28px", // Increased padding
-              marginLeft: isSub ? 16 : 24,
+              padding: isMobile ? "24px 20px" : "32px 28px",
+              marginLeft: isMobile ? 0 : (isSub ? 16 : 24),
               display: "flex",
               flexDirection: "column",
               gap: 22,
@@ -101,12 +119,24 @@ export default function ClueCard({
               <span style={{ fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8892a4" }}>
                 Clue
               </span>
-              {question.startsWith("IMAGE:") ? (
+              {question.startsWith("IMAGES:") ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {question.replace("IMAGES:", "").split(",").map((src, i) => (
+                    <img 
+                      key={i}
+                      src={src.trim()} 
+                      alt={`Clue ${i+1}`} 
+                      onClick={() => setShowPopup(true)}
+                      style={{ width: "100%", borderRadius: 0, cursor: "pointer", border: `1px solid ${accentA}0.2)` }} 
+                    />
+                  ))}
+                </div>
+              ) : question.startsWith("IMAGE:") ? (
                 <img 
                   src={question.replace("IMAGE:", "")} 
                   alt="Clue" 
                   onClick={() => setShowPopup(true)}
-                  style={{ width: "100%", borderRadius: 8, cursor: "pointer", border: `1px solid ${accentA}0.2)` }} 
+                  style={{ width: "100%", borderRadius: 0, cursor: "pointer", border: `1px solid ${accentA}0.2)` }} 
                 />
               ) : (
                 <p 
@@ -205,11 +235,22 @@ export default function ClueCard({
               }}>
                 {clueId.toUpperCase()} Clue
               </h3>
-              {question.startsWith("IMAGE:") ? (
+              {question.startsWith("IMAGES:") ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16, overflowY: "auto", maxHeight: "60vh" }}>
+                  {question.replace("IMAGES:", "").split(",").map((src, i) => (
+                    <img 
+                      key={i}
+                      src={src.trim()} 
+                      alt={`Clue ${i+1}`} 
+                      style={{ width: "100%", objectFit: "contain", borderRadius: 0 }} 
+                    />
+                  ))}
+                </div>
+              ) : question.startsWith("IMAGE:") ? (
                 <img 
                   src={question.replace("IMAGE:", "")} 
                   alt="Clue" 
-                  style={{ width: "100%", maxHeight: "60vh", objectFit: "contain", borderRadius: 8 }} 
+                  style={{ width: "100%", maxHeight: "60vh", objectFit: "contain", borderRadius: 0 }} 
                 />
               ) : (
                 <p style={{ fontSize: "1.2rem", color: "#e8eaf0", lineHeight: 1.6, margin: 0 }}>

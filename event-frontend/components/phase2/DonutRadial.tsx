@@ -46,7 +46,7 @@ export default function DonutRadial({ progress, activeMain, activeSub, onSelectM
       initial={{ opacity: 0, scale: 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      style={{ position: "relative", width: 500, height: 500, flexShrink: 0 }}
+      className="relative flex-shrink-0 w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] md:w-[500px] md:h-[500px]"
     >
       <svg viewBox="-20 -20 320 320" width="100%" height="100%" style={{ overflow: "visible" }}>
         <defs>

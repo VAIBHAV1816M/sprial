@@ -15,13 +15,13 @@ const phase1Answers = {
 
 const phase2Answers = {
   c11: "0203",
-  c1: "sub1",
+  c1: "HEB",
   c22: "atomic habits",
-  c2: "sub2",
+  c2: "RON",
   c33: "hebron",
-  c3: "sub3",
+  c3: "TH",
   c44: "infinity",
-  c4: "sub4"
+  c4: "0"
 };
 
 /* ---------------- PHASE 3 ANSWERS ---------------- */

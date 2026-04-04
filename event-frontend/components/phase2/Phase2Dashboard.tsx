@@ -12,10 +12,10 @@ const QUESTIONS: Record<string, string> = {
   c22: "Smallest Unit , Patterned Action Not on paper—look in the cloud",
   c33: "First births the second, Second mirrors the third, The rule never speaks — only repeats. Decode the pair, The next reveals the place.",
   c44: "IMAGE:/c44.png",
-  c1:  "c1 question here",
-  c2:  "c2 question here",
-  c3:  "c3 question here",
-  c4:  "c4 question here",
+  c1:  "it became iconic because of the one unforgettable moment",
+  c2:  "IMAGES:/images/clue1.png,/images/clue2.png,/images/clue3.png",
+  c3:  "One operation repeats.",
+  c4:  "What remains when the unbounded is undone?",
 };
 
 const MAIN_IDS = ["c11", "c22", "c33", "c44"];
