@@ -14,12 +14,12 @@ const phase1Answers = {
 /* ---------------- PHASE 2 ANSWERS ---------------- */
 
 const phase2Answers = {
-  c11: "0203",
+  c11: "2:03",
   c1: "HEB",
   c22: "atomic habits",
   c2: "RON",
-  c33: "hebron",
-  c3: "TH",
+  c33: "31 35",
+  c3: "DH",
   c44: "infinity",
   c4: "0"
 };

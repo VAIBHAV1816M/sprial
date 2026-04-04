@@ -3,30 +3,30 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DonutRadial from "./DonutRadial";
-import ClueCard    from "./ClueCard";
-import ParticleBackground from "./ParticleBackground"; 
+import ClueCard from "./ClueCard";
+import ParticleBackground from "./ParticleBackground";
 
 // ── Define Clues & Mappings ──
 const QUESTIONS: Record<string, string> = {
-  c11: "become known to more and more people the demands to do something about this outrageous man become louder and loud",
+  c11: "IMAGE_DL:/images/clueC11.jpeg|https://drive.google.com/file/d/1GQEZTXESfn-fsfMJRDdA1kaSFQ3pYXKq/view?usp=sharing",
   c22: "Smallest Unit , Patterned Action Not on paper—look in the cloud",
-  c33: "First births the second, Second mirrors the third, The rule never speaks — only repeats. Decode the pair, The next reveals the place.",
-  c44: "IMAGE:/c44.png",
-  c1:  "it became iconic because of the one unforgettable moment",
-  c2:  "IMAGES:/images/clue1.png,/images/clue2.png,/images/clue3.png",
-  c3:  "One operation repeats.",
-  c4:  "What remains when the unbounded is undone?",
+  c33: "The first creates the pattern. The second obeys it without question. They are separated, bind them again. What they become is not the place… but 2 numbers.",
+  c44: "TEXT_IMAGE:Read it the way it turns , not the way it writtens|/images/infinity clue.jpeg",
+  c1: "it became iconic because of the one unforgettable moment",
+  c2: "IMAGE:/images/all three clues.jpeg",
+  c3: "From fragments to meaning",
+  c4: "What remains when the unbounded is ultered?",
 };
 
 const MAIN_IDS = ["c11", "c22", "c33", "c44"];
-const SUB_MAP:  Record<string, string> = { c44: "c4", c11: "c1", c22: "c2", c33: "c3" };
+const SUB_MAP: Record<string, string> = { c44: "c4", c11: "c1", c22: "c2", c33: "c3" };
 
 interface Props {
-  message:        string;
-  progress:       any;
-  answers:        any;
+  message: string;
+  progress: any;
+  answers: any;
   handleAnswerChange: (e: any, clueId: string) => void;
-  handleSubmit:   (clueId: string) => void;
+  handleSubmit: (clueId: string) => void;
 }
 
 export default function Phase2Dashboard({
@@ -35,32 +35,32 @@ export default function Phase2Dashboard({
 
   const safeProgress = { ...(progress || {}) };
 
-  const [activeMain,    setActiveMain]    = useState<string | null>(null);
-  const [activeSub,     setActiveSub]     = useState<string | null>(null);
+  const [activeMain, setActiveMain] = useState<string | null>(null);
+  const [activeSub, setActiveSub] = useState<string | null>(null);
   const [activeMainIdx, setActiveMainIdx] = useState(0);
-  const [activeSubIdx,  setActiveSubIdx]  = useState(0);
+  const [activeSubIdx, setActiveSubIdx] = useState(0);
 
   const handleSelectMain = (id: string, idx: number) => {
     if (activeMain === id) { setActiveMain(null); setActiveSub(null); return; }
     setActiveMain(id);
     setActiveMainIdx(idx);
-    setActiveSub(null); 
+    setActiveSub(null);
   };
 
   const handleSelectSub = (id: string, idx: number) => {
     if (activeSub === id) { setActiveSub(null); return; }
     setActiveSub(id);
     setActiveSubIdx(idx);
-    setActiveMain(null); 
+    setActiveMain(null);
   };
 
   const solvedMain = MAIN_IDS.filter((id) => safeProgress[id]).length;
-  const solvedSub  = Object.values(SUB_MAP).filter((id) => safeProgress[id]).length;
+  const solvedSub = Object.values(SUB_MAP).filter((id) => safeProgress[id]).length;
 
-  const isError = message.toLowerCase().includes("wrong") || 
-                  message.toLowerCase().includes("failed") || 
-                  message.toLowerCase().includes("error") || 
-                  message.toLowerCase().includes("incorrect");
+  const isError = message.toLowerCase().includes("wrong") ||
+    message.toLowerCase().includes("failed") ||
+    message.toLowerCase().includes("error") ||
+    message.toLowerCase().includes("incorrect");
 
   return (
     <div
@@ -80,7 +80,7 @@ export default function Phase2Dashboard({
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "14px 32px",
-          background: "rgba(5,7,9,0.82)", 
+          background: "rgba(5,7,9,0.82)",
           backdropFilter: "blur(14px)",
           borderBottom: "1px solid rgba(0,255,204,0.1)",
           position: "sticky", top: 0, zIndex: 50,
@@ -103,7 +103,7 @@ export default function Phase2Dashboard({
         <div style={{ display: "flex", gap: 28 }}>
           {[
             { label: "Main Clues", val: `${solvedMain} / 4`, color: "#00ffcc" },
-            { label: "Sub Clues",  val: `${solvedSub} / 4`,  color: "#a78bfa" },
+            { label: "Sub Clues", val: `${solvedSub} / 4`, color: "#a78bfa" },
           ].map(({ label, val, color }) => (
             <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
               <span style={{ fontSize: "0.55rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8892a4" }}>{label}</span>
@@ -149,7 +149,7 @@ export default function Phase2Dashboard({
 
       {/* ── Page Layout Wrapper ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", position: "relative", zIndex: 10 }}>
-        
+
         {/* ── Hero Text Section (Matched to Phase 1) ── */}
         <div className="w-full max-w-[1100px] mx-auto pt-10 pb-4 px-8 z-10">
           <div className="flex items-center gap-2 text-[0.68rem] text-[#8892a4] tracking-[0.14em] uppercase mb-4">
@@ -191,7 +191,7 @@ export default function Phase2Dashboard({
                     key={id}
                     animate={{
                       background: safeProgress[id] ? "#00ffcc" : "rgba(0,255,204,0.1)",
-                      boxShadow:  safeProgress[id] ? "0 0 10px rgba(0,255,204,0.5)" : "none",
+                      boxShadow: safeProgress[id] ? "0 0 10px rgba(0,255,204,0.5)" : "none",
                     }}
                     transition={{ duration: 0.4 }}
                     style={{ width: 10, height: 10, borderRadius: "50%", border: "1px solid rgba(0,255,204,0.2)" }}
