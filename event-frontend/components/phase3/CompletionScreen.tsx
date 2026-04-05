@@ -77,7 +77,7 @@ const CompletionScreen = () => {
             marginBottom: "16px",
           }}
         >
-          // SYSTEM OVERRIDE SUCCESSFUL
+          // Mail Phase Completed
         </motion.p>
 
         <motion.h1
@@ -94,7 +94,7 @@ const CompletionScreen = () => {
             textTransform: "uppercase",
           }}
         >
-          ACCESS GRANTED
+          Congratualations !!
         </motion.h1>
 
         <motion.div
