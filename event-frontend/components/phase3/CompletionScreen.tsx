@@ -121,7 +121,7 @@ const CompletionScreen = () => {
             margin: "0 auto",
           }}
         >
-          All fragments integrated. Master key sequence accepted.
+          All Parts Founded. Rearrange them to get the mail id
           <br />
           <span style={{ color: "#00ff88", fontWeight: 600 }}>Congratulations - now for the sequence of all parts to get mail id final clue is - 'with respect to North , follow the sequence from right to left' add @gmail.com in the end</span>
         </motion.p>
