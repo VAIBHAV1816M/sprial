@@ -102,7 +102,7 @@ type Props = {
 };
 
 const clues = [
-  { id: "clue1", title: "Clue 1", subtitle: "Decrypt", text: "Among the hexes, lies a number.\nCount the edges to reveal it." },
+  { id: "clue1", title: "Clue 1", subtitle: "Decrypt", text: "Octagon - Square (both exist at one place)" },
   { id: "clue2", title: "Clue 2", subtitle: "Analyze", text: "On the east side lies a hidden bloom.\nNo sunlight, no scent—count what defines it." },
   { id: "clue3", title: "Clue 3", subtitle: "Unlock", text: "Rise once above the common ground,\nwhere paths don’t end, just turn around.\nFollow the curve that won’t stay straight,\nthen face what it refuses to state." },
 ];
