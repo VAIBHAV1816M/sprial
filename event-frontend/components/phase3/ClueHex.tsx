@@ -25,11 +25,8 @@ export default function ClueHex({ id, title, subtitle, active, solved, onClick }
       whileHover={!solved ? { scale: 1.05, filter: "drop-shadow(0 0 15px rgba(0,255,204,0.3))" } : {}}
       whileTap={!solved ? { scale: 0.95 } : {}}
       onClick={onClick}
+      className="w-[105px] h-[120px] sm:w-[140px] sm:h-[160px] relative cursor-pointer"
       style={{
-        width: "140px",
-        height: "160px",
-        cursor: "pointer",
-        position: "relative",
         filter: `drop-shadow(${glow})`, // The subtle glow effect
       }}
     >
@@ -57,16 +54,16 @@ export default function ClueHex({ id, title, subtitle, active, solved, onClick }
 
         <div style={{ zIndex: 10, textAlign: "center", display: "flex", flexDirection: "column", gap: "6px" }}>
           {solved ? (
-            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth={2.5} className="w-8 h-8 mx-auto mb-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth={2.5} className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
           ) : (
-            <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "1.1rem", color: textColor, margin: 0 }}>
+            <h3 className="font-syne font-bold text-[0.8rem] sm:text-[1.1rem] m-0" style={{ color: textColor }}>
               {title}
             </h3>
           )}
-          <span style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: "0.6rem", textTransform: "uppercase", letterSpacing: "0.15em", color: solved ? "#34d399" : "#8892a4" }}>
+          <span className="font-mono text-[0.45rem] sm:text-[0.6rem] uppercase tracking-widest" style={{ color: solved ? "#34d399" : "#8892a4" }}>
             {solved ? "Integrated" : subtitle}
           </span>
         </div>

@@ -8,7 +8,7 @@ import CompletionScreen from "./CompletionScreen";
 import ParticleBackground from "./ParticleBackground";
 
 // --- OVERLAY SECTION (April 5th) ---
-const UNLOCK_TIME = new Date("2026-04-05T14:00:00+05:30"); 
+const UNLOCK_TIME = new Date("2026-04-05T00:00:00+05:30");
 
 function ComingSoonOverlay() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -102,10 +102,9 @@ type Props = {
 };
 
 const clues = [
-  { id: "clue1", title: "Clue 1", subtitle: "Decrypt" },
-  { id: "clue2", title: "Clue 2", subtitle: "Analyze" },
-  { id: "clue3", title: "Clue 3", subtitle: "Unlock" },
-  { id: "clue4", title: "Clue 4", subtitle: "Decrypt Key" },
+  { id: "clue1", title: "Clue 1", subtitle: "Decrypt", text: "Among the hexes, lies a number.\nCount the edges to reveal it." },
+  { id: "clue2", title: "Clue 2", subtitle: "Analyze", text: "On the east side lies a hidden bloom.\nNo sunlight, no scent—count what defines it." },
+  { id: "clue3", title: "Clue 3", subtitle: "Unlock", text: "Rise once above the common ground,\nwhere paths don’t end, just turn around.\nFollow the curve that won’t stay straight,\nthen face what it refuses to state." },
 ];
 
 const LoginScreen = ({
@@ -129,12 +128,13 @@ const LoginScreen = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
         style={{
-          position: "relative", zIndex: 10, width: "400px",
+          position: "relative", zIndex: 10, width: "90%", maxWidth: "400px",
           background: "rgba(7, 9, 13, 0.85)", backdropFilter: "blur(12px)",
           border: "1px solid rgba(0,229,255,0.12)", borderRadius: "16px",
-          padding: "36px", display: "flex", flexDirection: "column", gap: "24px",
+          padding: "24px 20px", display: "flex", flexDirection: "column", gap: "24px",
           boxShadow: "0 0 80px rgba(0,229,255,0.04), 0 24px 48px rgba(0,0,0,0.6)",
         }}
+        className="sm:p-9"
       >
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
           <span style={{
@@ -220,12 +220,7 @@ const Phase3UI = ({
       <div className="absolute bottom-[-150px] right-[-150px] w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none z-0 bg-[radial-gradient(circle,rgba(167,139,250,0.04)_0%,transparent_70%)]" />
 
       <div
-        style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "14px 32px", background: "rgba(5,7,9,0.82)", backdropFilter: "blur(14px)",
-          borderBottom: "1px solid rgba(0,255,204,0.1)", position: "relative", zIndex: 50,
-          flexShrink: 0
-        }}
+        className="flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 bg-[#050709d1] backdrop-blur-md border-b border-[rgba(0,255,204,0.1)] relative z-50 shrink-0"
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#00ffcc", fontSize: "0.9rem", letterSpacing: "0.1em" }}>PHASE 3</span>
@@ -233,7 +228,7 @@ const Phase3UI = ({
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
           <span style={{ fontSize: "0.55rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8892a4" }}>Clues Solved</span>
-          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: "#00ffcc", fontSize: "0.85rem" }}>{solvedCount} / 4</span>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, color: "#00ffcc", fontSize: "0.85rem" }}>{solvedCount} / 3</span>
         </div>
       </div>
 
@@ -267,10 +262,10 @@ const Phase3UI = ({
             <span className="w-1.5 h-1.5 bg-[#00ffcc] rounded-full shadow-[0_0_8px_#00ffcc] animate-pulse" />
             Phase 3
           </div>
-          <h1 className="font-syne font-extrabold text-[clamp(2rem,3.5vw,3rem)] leading-[1.1] tracking-wide bg-gradient-to-br from-[#e8eaf0] to-[#00ffcc] bg-clip-text text-transparent uppercase">
+          <h1 className="font-syne font-extrabold text-[clamp(1.8rem,7vw,3rem)] leading-[1.1] tracking-wide bg-gradient-to-br from-[#e8eaf0] to-[#00ffcc] bg-clip-text text-transparent uppercase">
             Core Data Integration
           </h1>
-          <p className="text-[#8892a4] text-[0.8rem] mt-2 font-mono tracking-widest uppercase">
+          <p className="text-[#8892a4] text-[0.65rem] sm:text-[0.8rem] mt-2 font-mono tracking-widest uppercase text-center max-w-[80%] sm:max-w-full">
             Assemble the final sequence
           </p>
         </motion.div>
@@ -278,7 +273,7 @@ const Phase3UI = ({
         <motion.div
           initial="hidden" animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.1 } }, hidden: {} }}
-          className="flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-4 w-full"
+          className="flex flex-row flex-wrap sm:flex-nowrap justify-center items-center gap-3 sm:gap-4 w-full"
         >
           {clues.map((clue) => (
             <motion.div key={clue.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
@@ -294,11 +289,12 @@ const Phase3UI = ({
           ))}
         </motion.div>
 
-        <div className="w-full h-[240px] flex justify-center items-start mt-2">
+        <div className="w-full sm:h-[240px] flex justify-center items-start mt-4 sm:mt-2">
           <CluePanel
             activeClue={activeClue}
             isSolved={activeClue ? !!progress?.[activeClue] : false}
             answerValue={activeClue ? (answers?.[activeClue] || "") : ""}
+            questionText={activeClue ? clues.find(c => c.id === activeClue)?.text : undefined}
             onAnswerChange={(e) => activeClue && handleAnswerChange(e, activeClue)}
             onSubmit={() => activeClue && handleSubmit(activeClue)}
           />

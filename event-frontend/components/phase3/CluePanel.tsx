@@ -18,7 +18,7 @@ export default function CluePanel({
   const [displayedText, setDisplayedText] = useState("");
   
   // Use the provided questionText, or fallback to the default text
-  const defaultText = "Final decryption layer active. All collected fragments must be assembled into the master key sequence. Integration imminent.";
+  const defaultText = "Rise once above the common ground,\nwhere paths don’t end, just turn around.\nFollow the curve that won’t stay straight,\nthen face what it refuses to state.";
   const fullText = isSolved 
     ? "Data fragment integrated successfully. The master key sequence is stabilizing." 
     : (questionText || defaultText);
@@ -59,13 +59,8 @@ export default function CluePanel({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.3 }}
+            className="p-5 sm:p-8 rounded-2xl bg-[rgba(7,9,13,0.8)] backdrop-blur-md border border-[rgba(0,255,204,0.15)] shadow-[0_10px_30px_rgba(0,0,0,0.5),0_0_40px_rgba(0,255,204,0.05)] w-full max-w-full"
             style={{
-              background: "rgba(7, 9, 13, 0.8)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(0,255,204,0.15)",
-              borderRadius: "16px",
-              padding: "32px",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.5), 0 0 40px rgba(0,255,204,0.05)",
             }}
           >
             {/* Header */}
@@ -87,7 +82,7 @@ export default function CluePanel({
                 paddingRight: "10px" // Adds breathing room so text doesn't hit the scrollbar
               }}
             >
-              <p style={{ color: "#e8eaf0", fontSize: "0.95rem", lineHeight: 1.6, fontFamily: "'DM Sans', sans-serif", minHeight: "48px", margin: 0 }}>
+              <p style={{ color: "#e8eaf0", fontSize: "0.95rem", lineHeight: 1.6, fontFamily: "'DM Sans', sans-serif", minHeight: "48px", margin: 0, whiteSpace: "pre-wrap" }}>
                 {displayedText}
                 {/* Blinking Cursor while typing */}
                 {displayedText.length < fullText.length && (
@@ -101,9 +96,9 @@ export default function CluePanel({
             </div>
 
             {/* Input Area */}
-            <div style={{ display: "flex", gap: "16px", alignItems: "stretch" }}>
-              <div style={{ flex: 1, position: "relative" }}>
-                <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: isSolved ? "#34d399" : "#00ffcc", fontFamily: "monospace" }}>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch w-full">
+              <div className="flex-1 relative w-full">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono" style={{ color: isSolved ? "#34d399" : "#00ffcc" }}>
                   {">"}
                 </span>
                 <input
@@ -113,12 +108,11 @@ export default function CluePanel({
                   disabled={isSolved}
                   placeholder={isSolved ? "Sequence locked." : "Enter your answer..."}
                   onKeyDown={(e) => e.key === "Enter" && !isSolved && onSubmit()}
+                  className="w-full py-3.5 pr-4 pl-9 rounded-lg font-mono text-[0.9rem] outline-none transition-colors"
                   style={{
-                    width: "100%", height: "100%", padding: "14px 16px 14px 36px",
                     background: "#0c0f14", border: `1px solid ${isSolved ? "rgba(52,211,153,0.3)" : "rgba(0,255,204,0.2)"}`,
-                    borderRadius: "8px", color: isSolved ? "#34d399" : "#e8eaf0",
-                    fontFamily: "'Share Tech Mono', monospace", fontSize: "0.9rem",
-                    outline: "none", caretColor: "#00ffcc", transition: "border-color 0.2s",
+                    color: isSolved ? "#34d399" : "#e8eaf0",
+                    caretColor: "#00ffcc",
                     opacity: isSolved ? 0.7 : 1, cursor: isSolved ? "not-allowed" : "text"
                   }}
                 />
@@ -129,13 +123,12 @@ export default function CluePanel({
                 whileTap={!isSolved ? { scale: 0.98 } : {}}
                 onClick={onSubmit}
                 disabled={isSolved}
+                className="py-3.5 sm:py-0 px-8 rounded-lg font-orbitron text-[0.75rem] tracking-widest font-bold uppercase transition-all w-full sm:w-auto"
                 style={{
-                  padding: "0 32px", background: isSolved ? "rgba(52,211,153,0.1)" : "rgba(0,255,204,0.08)",
+                  background: isSolved ? "rgba(52,211,153,0.1)" : "rgba(0,255,204,0.08)",
                   border: `1px solid ${isSolved ? "rgba(52,211,153,0.4)" : "rgba(0,255,204,0.4)"}`,
-                  borderRadius: "8px", color: isSolved ? "#34d399" : "#00ffcc",
-                  fontFamily: "'Orbitron', monospace", fontSize: "0.75rem", letterSpacing: "0.1em",
-                  fontWeight: "bold", cursor: isSolved ? "default" : "pointer", opacity: isSolved ? 0.6 : 1,
-                  textTransform: "uppercase"
+                  color: isSolved ? "#34d399" : "#00ffcc",
+                  cursor: isSolved ? "default" : "pointer", opacity: isSolved ? 0.6 : 1,
                 }}
               >
                 {isSolved ? "Locked" : "Submit"}

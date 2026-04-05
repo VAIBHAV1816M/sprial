@@ -64,8 +64,7 @@ const userSchema = new mongoose.Schema({
   cluesSolvedPhase3: {
     clue1: { type: Boolean, default: false },
     clue2: { type: Boolean, default: false },
-    clue3: { type: Boolean, default: false },
-    clue4: { type: Boolean, default: false }
+    clue3: { type: Boolean, default: false }
   },
 
   // ================= NEW (ANSWERS STORAGE) =================
@@ -95,8 +94,7 @@ const userSchema = new mongoose.Schema({
   cluesAnswersPhase3: {
     clue1: { type: String, default: "" },
     clue2: { type: String, default: "" },
-    clue3: { type: String, default: "" },
-    clue4: { type: String, default: "" }
+    clue3: { type: String, default: "" }
   },
 
   // ================= EXISTING =================

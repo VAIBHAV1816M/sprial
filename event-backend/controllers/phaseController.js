@@ -27,10 +27,9 @@ const phase2Answers = {
 /* ---------------- PHASE 3 ANSWERS ---------------- */
 
 const phase3Answers = {
-  clue1: "mail1",
-  clue2: "mail2",
-  clue3: "mail3",
-  clue4: "mail4"
+  clue1: "15",
+  clue2: "12",
+  clue3: "cicada"
 };
 
 
@@ -298,7 +297,7 @@ const submitPhase3Answer = async (req, res) => {
 
     const p = user.cluesSolvedPhase3;
 
-    if (p.clue1 && p.clue2 && p.clue3 && p.clue4) {
+    if (p.clue1 && p.clue2 && p.clue3) {
       user.phase3Completed = true;
       user.phase3CompletedTime = new Date();
 
